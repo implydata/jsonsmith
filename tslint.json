@@ -1,0 +1,17 @@
+{
+  "extends": "awesome-code-style/tslint.json",
+  "rules": {
+    "no-shadowed-variable": false,
+    "variable-name": true,
+    "no-conditional-assignment": true,
+    "no-string-literal": true,
+    "object-literal-shorthand": false,
+    "no-require-imports": false,
+    "arrow-return-shorthand": false,
+    "no-var-requires": true,
+    "no-unused-variable": true
+  },
+  "linterOptions": {
+    "format": "useful"
+  }
+}
