@@ -34,7 +34,7 @@ export function makePath(parts: string[]): string {
   return parts.map(p => p.includes('.') ? `{${p}}` : p).join('.');
 }
 
-function isAppend(key: string): boolean {
+export function isAppend(key: string): boolean {
   return key === '[append]' || key === '-1';
 }
 
@@ -98,4 +98,14 @@ export function whitelistKeys(obj: Record<string, any>, whitelist: string[]): Re
     }
   }
   return newObj;
+}
+
+export function getAllKeys(obj: any, prefix = ''): string[] {
+  return Object.keys(obj).reduce((res, key) => {
+    if (obj[key] !== null && Object.prototype.toString.call(obj[key]) === '[object Object]') {
+      return [...res, ...getAllKeys(obj[key], prefix + key + '.')];
+    } else {
+      return [...res, prefix + key];
+    }
+  }, []);
 }

@@ -1,4 +1,4 @@
-import { deepDelete, deepGet, deepSet, makePath, parsePath } from './object-change';
+import { deepDelete, deepGet, deepSet, getAllKeys, makePath, parsePath } from './object-utils';
 
 describe('object-change', () => {
   describe('parsePath', () => {
@@ -34,6 +34,10 @@ describe('object-change', () => {
       expect(deepGet(thing, 'hello.wow.0')).toEqual('a');
       expect(deepGet(thing, 'hello.wow.4')).toEqual(undefined);
       expect(deepGet(thing, 'hello.{consumer.props}')).toEqual('lol');
+    });
+
+    it('works with arrays', () => {
+      expect(deepGet({ key: ['one'] }, 'key.0')).toEqual('one');
     });
 
   });
@@ -144,6 +148,51 @@ describe('object-change', () => {
       });
     });
 
+  });
+
+  describe('getAllKeys', () => {
+    it('works with nested', () => {
+      expect(getAllKeys({
+        "key1": {
+          "subkey1": 2,
+          "subkey2": {
+            "three": 3
+          }
+        },
+        "key2": "things",
+        "key3": null
+      })).toEqual([
+        "key1.subkey1",
+        "key1.subkey2.three",
+        "key2",
+        "key3"
+      ]);
+    });
+
+    it('works with nested array', () => {
+      expect(getAllKeys({
+        "someProperties": {
+          "common": [
+            "a=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer",
+            ""
+          ]
+        }
+      })).toEqual([
+        'someProperties.common'
+      ]);
+    });
+
+    it('works with not nested', () => {
+      expect(getAllKeys({
+        "key1": "value1",
+        "key2": "value2",
+        "key3": null
+      })).toEqual([
+        "key1",
+        "key2",
+        "key3"
+      ]);
+    });
   });
 
 });

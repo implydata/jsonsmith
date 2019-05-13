@@ -13,16 +13,20 @@
     "lib": ["dom", "es2016"],
     "target": "es5",
     "module": "commonjs",
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
     "moduleResolution": "node",
-    "baseUrl": ".",
+    "baseUrl": "./"
+  },
+  "paths": {
+    "AB": ["src/main"]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "test/*.ts"
   ],
   "files": [
-    "src/index.ts"
+    "src/main.ts"
   ]
 }
 
