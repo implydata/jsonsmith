@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/implydata/jsonsmith.git"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest --config jestconfig.json",
     "watch": "tsc --watch",

@@ -1,4 +1,4 @@
-import { main } from './main';
+import { cobble } from './cobble';
 import * as fs from 'fs-extra';
 
 describe('main', () => {
@@ -6,7 +6,7 @@ describe('main', () => {
     const fixedConnectionYaml = 'test/configs/config-fixed-connection.yaml';
     const fileContents = 'fixedConnections.0.name: override';
     await fs.writeFile(fixedConnectionYaml, fileContents);
-    const resp: any = await main({
+    const resp: any = await cobble({
       inputs: [
         'test/configs/config-simple.yaml',
         'test/configs/config-fixed-connection.yaml'
@@ -17,7 +17,7 @@ describe('main', () => {
   });
 
   it('works with inline vars', async () => {
-    const resp: any = await main({
+    const resp: any = await cobble({
       inputs: [
         { raw: `{'userNameLabel': 'welcome to %{subdivision}%'}` }
       ],
@@ -32,7 +32,7 @@ describe('main', () => {
     const fileContents = 'userNameLabel=myDotPropertiesLabel';
     await fs.writeFile(dotProperties, fileContents);
 
-    const resp: any = await main({
+    const resp: any = await cobble({
       inputs: [
         'test/configs/config-simple.yaml',
         'test/configs/config.properties'
@@ -40,6 +40,16 @@ describe('main', () => {
     });
     expect(resp.userNameLabel).toEqual('myDotPropertiesLabel');
     await fs.remove(dotProperties);
+  });
+
+  it('works with json overrides', async () => {
+    const resp: any = await cobble({
+      inputs: [
+        'test/configs/config-simple.yaml',
+        { raw: `{'userMode': 'special-user'}` }
+      ]
+    });
+    expect(resp.userMode).toEqual('special-user');
   });
 
   it('works with yaml documents', async () => {
@@ -68,7 +78,7 @@ tracks.2.title: Panic!!!(edited)
 
     await fs.writeFile(documentsYaml, fileContents);
 
-    const resp: any = await main({
+    const resp: any = await cobble({
       inputs: [
         documentsYaml,
         'test/configs/config.properties'

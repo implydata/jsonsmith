@@ -1,5 +1,5 @@
-import { Format, inlineVars, tryParse } from './parsing/parsing';
-import { deepExtends } from './deep-extends/deep-extends';
+import { Format, inlineVars, tryParse } from '../parsing/parsing';
+import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
 
 interface Input {
@@ -44,7 +44,7 @@ const getFileData = (input: string | Input | Raw, path: string | null) => {
   return null;
 };
 
-export async function main<T>(params: MainParams): Promise<T> {
+export async function cobble<T>(params: MainParams): Promise<T> {
   const { inputs } = params;
   const debug = params.debug || ((v: string) => {});
   if (!Array.isArray(inputs)) {
@@ -53,7 +53,7 @@ export async function main<T>(params: MainParams): Promise<T> {
 
   let objects: any[] = [];
 
-  await Promise.all(inputs.map(async input => {
+  const getParsedObj = async (input: string | Input | Raw) => {
     const { path, format } = getPathAndFormat(input);
     const fileData = await getFileData(input, path);
 
@@ -66,13 +66,21 @@ export async function main<T>(params: MainParams): Promise<T> {
         debug(`Could not parse: ${fileData}: ${e.message}, continuing`);
       }
     }
-  }));
+  };
+
+  await inputs
+    .reduce((p, x) => {
+      return p.then(results => getParsedObj(x).then(r => objects.concat(r)));
+    }, Promise.resolve([]))
+    .then(results => {});
 
   if (!objects.length) {
     throw new Error('No objects to work with');
   }
 
   objects = objects.filter(Boolean);
+
+  debug(`got objects: ${JSON.stringify(objects)}`);
 
   if (params.varsObj) {
     objects = objects.map(object => inlineVars(object, params.varsObj as Record<string, string>));

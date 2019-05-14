@@ -194,5 +194,4 @@ describe('object-change', () => {
       ]);
     });
   });
-
 });
