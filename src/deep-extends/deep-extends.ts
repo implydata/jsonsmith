@@ -1,20 +1,20 @@
 import { deepSet } from '../object-utils/object-utils';
 
 function deepCloneArray<T>(arr: T[]): T[] {
-  const clone: T[] = [];
+  const clonedArr: T[] = [];
   arr.forEach((item, i) => {
     if (typeof item === 'object' && item != null) {
       if (Array.isArray(item)) {
-        clone[i] = deepCloneArray(item) as any;
+        clonedArr[i] = deepCloneArray(item) as any;
       } else {
-        clone[i] = deepExtends({}, item);
+        clonedArr[i] = deepExtends({}, item);
       }
     } else {
-      clone[i] = item;
+      clonedArr[i] = item;
     }
   });
 
-  return clone;
+  return clonedArr;
 }
 
 function resolveNewValue(oldVal: any, newVal: any) {

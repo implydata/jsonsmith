@@ -1,0 +1,39 @@
+additionalServiceHealthChecks: ['https://172.31.8.131:9088/status/health']
+
+sessionStore:
+  storageType: 'sqlite'
+  connection: 'private/session-simple.sqlite'
+
+settingsLocation:
+  location: file
+  format: 'json-pretty'
+  uri: ./pivot-settings.json
+
+fixedConnections:
+  name: druid
+
+defaultSender: '"Imply (testing)" <no-reply@imply.io>'
+
+userMode: default-user
+
+userNameLabel: "Awesome ID"
+_defaultAdminPass: 'abc'
+
+defaultUserPermissions:
+  - { name: 'ManageUsers' }
+  - { name: 'ManageUserRoles' }
+  - { name: 'ManageUserPasswords' }
+  - { name: 'ConfigureLookAndFeel' }
+  - { name: 'ManageConnections' }
+  - { name: 'ManageDatasets' }
+  - { name: 'AdministerDataCubes' }
+  - { name: 'AdministerDashboards' }
+  - { name: 'ChangeDataCubes' }
+  - { name: 'ChangeDashboards' }
+  - { name: 'SeeOtherUsers' }
+  - { name: 'AccessSQL' }
+  - { name: 'AccessVisualization' }
+  - { name: 'AccessDatasets' }
+  - { name: 'QueryRawData' }
+  - { name: 'DownloadData' }
+  - { name: 'DownloadLargeData' }
