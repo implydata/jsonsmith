@@ -34,10 +34,8 @@ export function inlineVars(obj: any, vs: Record<string, string>): any {
 export async function tryParse(fileData: string, format?: Format | null) {
   if (!format || format === 'yaml') {
     try {
-      const yamlResp = yaml.safeLoadAll(fileData);
-      if (yamlResp.every(yaml => typeof yaml === 'object')) {
-        return yamlResp;
-      }
+      const yamlResp = yaml.safeLoad(fileData);
+      if (typeof yamlResp === 'object') return yamlResp;
     } catch (e) {
       if (format === 'yaml') {
         throw new Error(`Could not parse yaml: ${e.message}`);

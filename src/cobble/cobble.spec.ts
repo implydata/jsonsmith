@@ -106,12 +106,19 @@ addendum:
             '1996'
             A major record deal 
             and some international notoriety
+footnote: |
+  -----BEGIN FOOTNOTE-----
+  Charted only on the Bubbling Under Hot 100 Singles or 
+  Bubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the 
+  Billboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.
+  -----END FOOTNOTE-----
 ...
 ---
 ! some last minute edits
 tracks.1.title = Section(edited)
 blue = note will
 ...
+
 `;
 
     await fs.writeFile(mixedFile, mixedContent);
@@ -121,7 +128,8 @@ blue = note will
         documentsYaml,
         dotProperties,
         mixedFile
-      ]
+      ],
+      debug: console.log
     });
 
     expect(resp).toEqual({
@@ -152,8 +160,9 @@ blue = note will
           "length": "4:33",
           "title": "It just don't stop"
         }
-      ]
-    }
+      ],
+      "footnote": "-----BEGIN FOOTNOTE-----\nCharted only on the Bubbling Under Hot 100 Singles or \nBubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the \nBillboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.\n-----END FOOTNOTE-----\n",
+      }
     );
 
     await fs.remove(dotProperties);

@@ -82,7 +82,7 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
 
 
     if (fileData) {
-      const splitIntoDocs = fileData.split(DOC_START);
+      const splitIntoDocs = fileData.split(/^[\.\.\.]?[\s]?---$/gm).filter(Boolean);
 
       for (let i = 0; i < splitIntoDocs.length; i++) {
         const doc = splitIntoDocs[i].replace(/\.\.\./g, '');
