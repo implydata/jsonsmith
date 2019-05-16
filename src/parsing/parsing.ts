@@ -36,7 +36,6 @@ export async function tryParse(fileData: string, format?: Format | null) {
     try {
       const yamlResp = yaml.safeLoadAll(fileData);
       if (yamlResp.every(yaml => typeof yaml === 'object')) {
-        console.log("this is yaml", fileData);
         return yamlResp;
       }
     } catch (e) {
