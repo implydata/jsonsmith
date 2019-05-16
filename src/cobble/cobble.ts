@@ -21,8 +21,6 @@ import { Format, inlineVars, tryParse } from '../parsing/parsing';
 import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
 
-const DOC_START = '---';
-
 interface InputSpec {
   path: string;
   format: Format;
