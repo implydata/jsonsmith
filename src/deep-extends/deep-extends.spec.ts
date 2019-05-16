@@ -254,7 +254,8 @@ describe('deepExtends', () => {
           diamond: ['collar'],
         },
         pockets: { ice: 3 },
-        f: ['bag']
+        f: ['bag'],
+        'a.b': 'test'
       };
 
       const obj2 = {

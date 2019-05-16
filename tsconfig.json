@@ -20,7 +20,8 @@
   },
   "include": [
     "**/*.ts",
-    "*.ts"
+    "*.ts",
+    "typings/**/*.d.ts"
   ],
   "files": [
     "src/index.ts"

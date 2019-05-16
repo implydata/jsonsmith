@@ -1,6 +1,27 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import { Format, inlineVars, tryParse } from '../parsing/parsing';
 import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
+
+const DOC_START = '---';
 
 interface InputSpec {
   path: string;
@@ -59,13 +80,19 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
     const { path, format } = getPathAndFormat(input);
     const fileData = await getFileData(input, path);
 
+
     if (fileData) {
-      try {
-        const parsed = await tryParse(fileData, format);
-        objects = objects.concat(parsed);
-        debug(`parsed: ${JSON.stringify(parsed)}`);
-      } catch (e) {
-        debug(`Could not parse: ${fileData}: ${e.message}, continuing`);
+      const splitIntoDocs = fileData.split(DOC_START);
+
+      for (let i = 0; i < splitIntoDocs.length; i++) {
+        const doc = splitIntoDocs[i].replace(/\.\.\./g, '');
+        try {
+          const parsed = await tryParse(doc, format);
+          objects = objects.concat(parsed);
+          debug(`parsed: ${JSON.stringify(parsed)}`);
+        } catch (e) {
+          debug(`Could not parse: ${path} for doc ${i}: ${e.message}, continuing`);
+        }
       }
     }
   };
