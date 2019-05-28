@@ -19,7 +19,30 @@
 
 import * as properties from 'properties';
 import * as yaml from 'js-yaml';
-export type Format = 'json' | 'json-pretty' | 'yaml' | 'properties';
+export type Format = 'json' | 'yaml' | 'properties';
+
+
+export function replaceTokens(obj: any, vs: Record<string, string>): any {
+  if (typeof obj === 'object') {
+    for (var key in obj) {
+      if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
+        replaceTokens(obj[key], vs)
+      } else {
+        const replaced = obj[key].replace(/%{[\w\-]+}%/g, (varName: string) => {
+          varName = varName.substr(2, varName.length - 4);
+          let v = vs[varName];
+          if (typeof v !== 'string') throw new Error(`could not find variable '${varName}'`);
+          return v;
+        });
+
+        obj[key] = replaced;
+      }
+    }
+  }
+
+  return obj;
+
+}
 
 export function inlineVars(obj: any, vs: Record<string, string>): any {
   return JSON.parse(JSON.stringify(obj).replace(/%\{[\w\-]+\}%/g, (varName) => {

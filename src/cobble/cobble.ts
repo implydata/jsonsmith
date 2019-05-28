@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { Format, inlineVars, tryParse } from '../parsing/parsing';
+import { Format, inlineVars, replaceTokens, tryParse } from '../parsing/parsing';
 import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
 
@@ -110,7 +110,7 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
   debug(`got objects: ${JSON.stringify(objects)}`);
 
   if (params.varsObj) {
-    objects = objects.map(object => inlineVars(object, params.varsObj as Record<string, string>));
+    objects = objects.map(object => replaceTokens(object, params.varsObj as Record<string, string>));
   }
 
   return deepExtends.apply(this, objects);
