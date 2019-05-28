@@ -49,4 +49,6 @@ The above would result in the following object
   - an object with property `raw` that maps to a value in json, yaml, or .properties format
 
 `varsObj`: an object on which interpolation will be done and passed in as the last input -- use this to pass in environment variables with syntax `%{VARIABLE_NAME}%`
+
+
 `debug`: a function that takes a string
