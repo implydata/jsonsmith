@@ -116,7 +116,7 @@ tracks.2.title: Panic!!!(edited)
     await fs.writeFile(footnoteYaml, footnoteContents);
 
     const footnoteJSON = 'test/configs/footnote.json';
-    const footnoteJSONContents = JSON.stringify({
+    const footnoteJSONContents = {
       "elements": [
         {
           "distance": {
@@ -130,9 +130,9 @@ tracks.2.title: Panic!!!(edited)
           "status": "OK"
         }
       ]
-    });
+    };
 
-    await fs.writeFile(footnoteJSON, footnoteJSONContents);
+    await fs.writeJSON(footnoteJSON, footnoteJSONContents);
 
     const footnoteText = 'test/configs/footnote.txt';
     const footnoteTextContents = `

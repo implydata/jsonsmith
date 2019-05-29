@@ -63,10 +63,7 @@ export async function resolveFiles(obj: any): Promise<any> {
               obj[key] = parsedYaml[key];
               break;
             case 'json':
-              let tuple: any = {};
-              tuple[key] = fileData;
-              const parsedJSON = JSON.parse(JSON.stringify(tuple));
-              obj[key] = parsedJSON[key];
+              obj[key] = JSON.parse(fileData);
               break;
             default:
               throw new Error(`Unsupported format: ${format}`);
