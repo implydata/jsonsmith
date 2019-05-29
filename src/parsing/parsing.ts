@@ -27,7 +27,7 @@ export type Format = 'json' | 'yaml' | 'properties';
 export async function resolveFiles(obj: any): Promise<any> {
   if (typeof obj === 'object') {
     for (const key in obj) {
-      if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
+      if (Object.prototype.toString.call(obj[key]) === '[object Object]' || Array.isArray(obj[key])) {
         await resolveFiles(obj[key]);
       } else {
         const value = obj[key];

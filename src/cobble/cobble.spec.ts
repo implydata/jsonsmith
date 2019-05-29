@@ -160,7 +160,9 @@ addendum:
         and some international notoriety
 footnote: $read_yaml(footnote.yaml, test/configs)
 footnote2: $read_json(footnote.json, test/configs)
-footnote3: $read_text(footnote.txt, test/configs)
+footnote3: 
+  - name: ey 
+    value: $read_text(footnote.txt, test/configs)
 ...
 ---
 ! some last minute edits
@@ -191,7 +193,12 @@ blue = note will
         "blue": "note will",
         "footnote": "-----BEGIN FOOTNOTE-----\nCharted only on the Bubbling Under Hot 100 Singles or \nBubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the \nBillboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.\n-----END FOOTNOTE-----\n",
         "footnote2": footnoteJSONContents,
-        "footnote3": "\"\\n<!DOCTYPE html>\\n<html>\\n<body>\\n\\n<h1 style=\\\"color:blue;\\\">This is a heading</h1>\\n<p style=\\\"color:red;\\\">This is a paragraph.</p>\\n\\n</body>\\n</html>\\n    \"",
+        "footnote3": [
+          {
+            "name": "ey",
+            "value": "\"\\n<!DOCTYPE html>\\n<html>\\n<body>\\n\\n<h1 style=\\\"color:blue;\\\">This is a heading</h1>\\n<p style=\\\"color:red;\\\">This is a paragraph.</p>\\n\\n</body>\\n</html>\\n    \""
+          }
+        ],
         "nest": {
           "userNameLabel": "myDotPropertiesLabel"
         },
