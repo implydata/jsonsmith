@@ -18,7 +18,8 @@ resolves a series of inputs to a single json value.
 
 ### Interpolation
   - a value with syntax `%{VARIABLE_NAME}%` will be evaluated in the context of `varsObj`
-  - `$read_json(path<string>, currentDir<string>)` will be interpreted as a file containing json, similarly `$read_text` and `$read_yaml` will read .txt and yaml files respectively.
+  - `$read_json(path<string>, currentDir<string>)` will be interpreted as a file containing json
+  `$read_text(path<string>, currentDir<string>)` and `$read_yaml(path<string>, currentDir<string>)` are analogues for text and yaml files respectively.
 
 ### Examples
 
