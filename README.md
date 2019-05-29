@@ -24,7 +24,7 @@ resolves a series of inputs to a single json value.
 
 #### With file paths
 ```javascript
-import { cobble } from 'jsonsmith
+import { cobble } from 'jsonsmith'
 
 cobble({
   inputs: [
@@ -37,7 +37,7 @@ This will do a deep extends with target being the first argument provided, and s
 
 #### With raw inputs
 ```javascript
-import { cobble } from 'jsonsmith
+import { cobble } from 'jsonsmith'
 
 cobble({
   inputs: [
@@ -64,7 +64,7 @@ The above would result in the following object
 #### With interpolation
 
 ```javascript
-import { cobble } from 'jsonsmith
+import { cobble } from 'jsonsmith'
 
 cobble({
   inputs: [
