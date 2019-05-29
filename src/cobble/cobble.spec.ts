@@ -76,11 +76,8 @@ describe('main', () => {
     const dotPropertiesContents = 'nest.userNameLabel=myDotPropertiesLabel';
     await fs.writeFile(dotProperties, dotPropertiesContents);
 
-    const documentsYaml = 'test/configs/config-documents.yaml';
-    const documentsYamlContents = `
----
-# Some songs
-tracks:
+    const tracksYaml = 'test/configs/tracks.yaml';
+    const tracksYamlContents = `
     - title: Respond/react
       length: '5:07'
     - title: Section
@@ -89,6 +86,16 @@ tracks:
       length: '1:24'
     - title: It just don't stop
       length: '4:33'
+`;
+
+    await fs.writeFile(tracksYaml, tracksYamlContents);
+
+    const documentsYaml = 'test/configs/config-documents.yaml';
+    const documentsYamlContents = `
+---
+# Some songs
+tracks: $read_yaml(tracks.yaml, test/configs)
+tracksAgain: $read_yaml(tracks.yaml, test/configs)
 ...
 ---
 tracks.2.title: Panic!!!(edited)
@@ -97,21 +104,63 @@ tracks.2.title: Panic!!!(edited)
 
     await fs.writeFile(documentsYaml, documentsYamlContents);
 
+    const footnoteYaml = 'test/configs/footnote.yaml';
+    const footnoteContents = `|
+  -----BEGIN FOOTNOTE-----
+  Charted only on the Bubbling Under Hot 100 Singles or 
+  Bubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the 
+  Billboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.
+  -----END FOOTNOTE-----
+`;
+
+    await fs.writeFile(footnoteYaml, footnoteContents);
+
+    const footnoteJSON = 'test/configs/footnote.json';
+    const footnoteJSONContents = JSON.stringify({
+      "elements": [
+        {
+          "distance": {
+            "text": "94.6 mi",
+            "value": 152193
+          },
+          "duration": {
+            "text": "1 hour 44 mins",
+            "value": 6227
+          },
+          "status": "OK"
+        }
+      ]
+    });
+
+    await fs.writeFile(footnoteJSON, footnoteJSONContents);
+
+    const footnoteText = 'test/configs/footnote.txt';
+    const footnoteTextContents = `
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1 style="color:blue;">This is a heading</h1>
+<p style="color:red;">This is a paragraph.</p>
+
+</body>
+</html>
+    `;
+
+    await fs.writeFile(footnoteText, footnoteTextContents);
+
     const mixedFile = 'test/configs/config-mixed.yaml';
     const mixedContent = `
 ---
 addendum:
     - title: Outro
       details: |
-            '1996'
-            A major record deal 
-            and some international notoriety
-footnote: |
-  -----BEGIN FOOTNOTE-----
-  Charted only on the Bubbling Under Hot 100 Singles or 
-  Bubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the 
-  Billboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.
-  -----END FOOTNOTE-----
+        '1996'
+        A major record deal 
+        and some international notoriety
+footnote: $read_yaml(footnote.yaml, test/configs)
+footnote2: $read_json(footnote.json, test/configs)
+footnote3: $read_text(footnote.txt, test/configs)
 ...
 ---
 ! some last minute edits
@@ -133,40 +182,64 @@ blue = note will
     });
 
     expect(resp).toEqual({
-      "addendum": [
-        {
-          "details": "'1996'\nA major record deal \nand some international notoriety\n",
-          "title": "Outro"
-        }
-      ],
-      "blue": "note will",
-      "nest": {
-        "userNameLabel": "myDotPropertiesLabel"
-      },
-      "tracks": [
-        {
-          "length": "5:07",
-          "title": "Respond/react"
+        "addendum": [
+          {
+            "details": "'1996'\nA major record deal \nand some international notoriety\n",
+            "title": "Outro"
+          }
+        ],
+        "blue": "note will",
+        "footnote": "-----BEGIN FOOTNOTE-----\nCharted only on the Bubbling Under Hot 100 Singles or \nBubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the \nBillboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.\n-----END FOOTNOTE-----\n",
+        "footnote2": footnoteJSONContents,
+        "footnote3": "\"\\n<!DOCTYPE html>\\n<html>\\n<body>\\n\\n<h1 style=\\\"color:blue;\\\">This is a heading</h1>\\n<p style=\\\"color:red;\\\">This is a paragraph.</p>\\n\\n</body>\\n</html>\\n    \"",
+        "nest": {
+          "userNameLabel": "myDotPropertiesLabel"
         },
-        {
-          "length": "4:08",
-          "title": "Section(edited)"
-        },
-        {
-          "length": "1:24",
-          "title": "Panic!!!(edited)"
-        },
-        {
-          "length": "4:33",
-          "title": "It just don't stop"
-        }
-      ],
-      "footnote": "-----BEGIN FOOTNOTE-----\nCharted only on the Bubbling Under Hot 100 Singles or \nBubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the \nBillboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.\n-----END FOOTNOTE-----\n",
+        "tracks": [
+          {
+            "length": "5:07",
+            "title": "Respond/react"
+          },
+          {
+            "length": "4:08",
+            "title": "Section(edited)"
+          },
+          {
+            "length": "1:24",
+            "title": "Panic!!!(edited)"
+          },
+          {
+            "length": "4:33",
+            "title": "It just don't stop"
+          }
+        ],
+        "tracksAgain": [
+          {
+            "length": "5:07",
+            "title": "Respond/react"
+          },
+          {
+            "length": "4:08",
+            "title": "Section"
+          },
+          {
+            "length": "1:24",
+            "title": "Panic!!!!!"
+          },
+          {
+            "length": "4:33",
+            "title": "It just don't stop"
+          }
+        ]
       }
     );
 
     await fs.remove(dotProperties);
     await fs.remove(documentsYaml);
     await fs.remove(mixedFile);
+    await fs.remove(tracksYaml);
+    await fs.remove(footnoteYaml);
+    await fs.remove(footnoteJSON);
+    await fs.remove(footnoteText);
   });
 });

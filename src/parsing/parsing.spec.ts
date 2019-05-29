@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { replaceTokens } from './parsing';
+import { replaceTokens, tryParse } from './parsing';
 
 describe('parsing', () => {
   describe('replaceTokens', () => {

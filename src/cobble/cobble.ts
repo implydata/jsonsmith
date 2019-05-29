@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { Format, inlineVars, replaceTokens, tryParse } from '../parsing/parsing';
+import { Format, replaceTokens, resolveFiles, tryParse } from '../parsing/parsing';
 import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
 
@@ -84,12 +84,21 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
 
       for (let i = 0; i < splitIntoDocs.length; i++) {
         const doc = splitIntoDocs[i].replace(/\.\.\./g, '');
+
+        let parsed: any;
         try {
-          const parsed = await tryParse(doc, format);
-          objects = objects.concat(parsed);
+          parsed = await tryParse(doc, format);
           debug(`parsed: ${JSON.stringify(parsed)}`);
         } catch (e) {
           debug(`Could not parse: ${path} for doc ${i}: ${e.message}, continuing`);
+        }
+
+        try {
+          const resolved = await resolveFiles(parsed);
+          objects = objects.concat(resolved);
+          debug(`resolved files: ${JSON.stringify(resolved)}`);
+        } catch (e) {
+          debug(`Could not resolve: ${path} for doc ${i}: ${e.message}, continuing`);
         }
       }
     }
