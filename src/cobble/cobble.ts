@@ -37,6 +37,7 @@ export interface CobbleParams {
   inputs: Input[];
   varsObj?: Record<string, any>;
   debug?: (s: string) => void;
+  disableReadFile?: boolean;
 }
 
 const getPathAndFormat = (input: string | InputSpec | Raw) => {
@@ -67,7 +68,7 @@ const getFileData = (input: string | InputSpec | Raw, path: string | null) => {
 };
 
 export async function cobble<T>(params: CobbleParams): Promise<T> {
-  const { inputs } = params;
+  const { inputs, disableReadFile } = params;
   const debug = params.debug || ((v: string) => {});
   if (!Array.isArray(inputs)) {
     throw new Error(`Please provide a list of inputs either as strings or { path: string, format: 'json' | 'yaml' | 'properties' } objects`);
@@ -94,8 +95,14 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
           debug(`Could not parse: ${filePath} for doc ${i}: ${e.message}, continuing`);
         }
 
+        if (disableReadFile) {
+          objects = objects.concat(parsed);
+          continue;
+        }
+
         try {
           const dirName = filePath ? path.dirname(filePath) : __dirname;
+          debug(`dirName at ${dirName}`);
           const resolved = await resolveFiles(parsed, dirName);
           objects = objects.concat(resolved);
           debug(`resolved files: ${JSON.stringify(resolved)}`);
