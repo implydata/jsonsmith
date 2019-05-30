@@ -20,6 +20,7 @@
 import { Format, replaceTokens, resolveFiles, tryParse } from '../parsing/parsing';
 import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 
 interface InputSpec {
   path: string;
@@ -75,8 +76,8 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
   let objects: any[] = [];
 
   const getParsedObj = async (input: string | InputSpec | Raw) => {
-    const { path, format } = getPathAndFormat(input);
-    const fileData = await getFileData(input, path);
+    const { path: filePath, format } = getPathAndFormat(input);
+    const fileData = await getFileData(input, filePath);
 
 
     if (fileData) {
@@ -90,15 +91,16 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
           parsed = await tryParse(doc, format);
           debug(`parsed: ${JSON.stringify(parsed)}`);
         } catch (e) {
-          debug(`Could not parse: ${path} for doc ${i}: ${e.message}, continuing`);
+          debug(`Could not parse: ${filePath} for doc ${i}: ${e.message}, continuing`);
         }
 
         try {
-          const resolved = await resolveFiles(parsed);
+          const dirName = filePath ? path.dirname(filePath) : __dirname;
+          const resolved = await resolveFiles(parsed, dirName);
           objects = objects.concat(resolved);
           debug(`resolved files: ${JSON.stringify(resolved)}`);
         } catch (e) {
-          debug(`Could not resolve: ${path} for doc ${i}: ${e.message}, continuing`);
+          debug(`Could not resolve: ${filePath} for doc ${i}: ${e.message}, continuing`);
         }
       }
     }

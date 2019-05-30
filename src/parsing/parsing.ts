@@ -24,11 +24,11 @@ import * as fs from 'fs-extra';
 export type Format = 'json' | 'yaml' | 'properties';
 
 
-export async function resolveFiles(obj: any): Promise<any> {
+export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
   if (typeof obj === 'object') {
     for (const key in obj) {
       if (Object.prototype.toString.call(obj[key]) === '[object Object]' || Array.isArray(obj[key])) {
-        await resolveFiles(obj[key]);
+        await resolveFiles(obj[key], currentDir);
       } else {
         const value = obj[key];
         let fileName = '';
@@ -37,12 +37,11 @@ export async function resolveFiles(obj: any): Promise<any> {
           const args = String(value).match(/(?:\$read_(text|json|yaml))\((.*)\)/);
           if (args && typeof args[1] === 'string' && typeof args[2] === 'string') {
             format = args[1];
-            const argsList = args[2].split(', ');
-            if (argsList.length !== 2) {
+            if (!args[2] || typeof args[2] !== 'string') {
               throw new Error("invalid arguments");
             }
 
-            fileName = path.resolve(argsList[1], argsList[0]);
+            fileName = path.resolve(currentDir, args[2]);
           }
 
           if (!fileName) continue;

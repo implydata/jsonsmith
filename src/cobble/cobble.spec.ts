@@ -94,8 +94,8 @@ describe('main', () => {
     const documentsYamlContents = `
 ---
 # Some songs
-tracks: $read_yaml(tracks.yaml, test/configs)
-tracksAgain: $read_yaml(tracks.yaml, test/configs)
+tracks: $read_yaml(tracks.yaml)
+tracksAgain: $read_yaml(tracks.yaml)
 ...
 ---
 tracks.2.title: Panic!!!(edited)
@@ -158,11 +158,11 @@ addendum:
         '1996'
         A major record deal 
         and some international notoriety
-footnote: $read_yaml(footnote.yaml, test/configs)
-footnote2: $read_json(footnote.json, test/configs)
+footnote: $read_yaml(footnote.yaml)
+footnote2: $read_json(footnote.json)
 footnote3: 
   - name: ey 
-    value: $read_text(footnote.txt, test/configs)
+    value: $read_text(footnote.txt)
 ...
 ---
 ! some last minute edits
