@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { Format, replaceTokens, resolveFiles, tryParse } from '../parsing/parsing';
+import { Format, replaceTokens, resolveFiles, splitYamlIntoDocs, tryParse } from '../parsing/parsing';
 import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -76,48 +76,44 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
 
   let objects: any[] = [];
 
-  const getParsedObj = async (input: string | InputSpec | Raw) => {
+  for (let input of inputs) {
     const { path: filePath, format } = getPathAndFormat(input);
     const fileData = await getFileData(input, filePath);
 
+    if (!fileData) {
+      continue;
+    }
 
-    if (fileData) {
-      const splitIntoDocs = fileData.split(/^[\.\.\.]?[\s]?---$/gm).filter(Boolean);
+    const docs = splitYamlIntoDocs(fileData);
 
-      for (let i = 0; i < splitIntoDocs.length; i++) {
-        const doc = splitIntoDocs[i].replace(/\.\.\./g, '');
+    for (let i = 0; i < docs.length; i++) {
+      const doc = docs[i];
+      let parsed: any;
+      try {
+        parsed = await tryParse(doc, format);
+        debug(`parsed: ${JSON.stringify(parsed)}`);
+      } catch (e) {
+        debug(`Could not parse: ${filePath} for doc ${i}: ${e.message}, continuing`);
+      }
 
-        let parsed: any;
-        try {
-          parsed = await tryParse(doc, format);
-          debug(`parsed: ${JSON.stringify(parsed)}`);
-        } catch (e) {
-          debug(`Could not parse: ${filePath} for doc ${i}: ${e.message}, continuing`);
-        }
+      if (disableReadFile) {
+        debug(`file inlining is not enabled`);
+        objects = objects.concat(parsed);
+        continue;
+      }
 
-        if (disableReadFile) {
-          objects = objects.concat(parsed);
-          continue;
-        }
-
-        try {
-          const dirName = filePath ? path.dirname(filePath) : __dirname;
-          debug(`dirName at ${dirName}`);
-          const resolved = await resolveFiles(parsed, dirName);
-          objects = objects.concat(resolved);
-          debug(`resolved files: ${JSON.stringify(resolved)}`);
-        } catch (e) {
-          debug(`Could not resolve: ${filePath} for doc ${i}: ${e.message}, continuing`);
-        }
+      try {
+        const dirName = filePath ? path.dirname(filePath) : __dirname;
+        debug(`dirName at ${dirName}`);
+        const resolved = await resolveFiles(parsed, dirName);
+        debug(`resolved files: ${JSON.stringify(resolved)}`);
+        objects = objects.concat(resolved);
+      } catch (e) {
+        debug(`Could not resolve: ${filePath} for doc ${i}: ${e.message}, continuing`);
       }
     }
-  };
+  }
 
-  await inputs
-    .reduce((p, x) => {
-      return p.then(results => getParsedObj(x).then(r => objects.concat(r)));
-    }, Promise.resolve([]))
-    .then(results => {});
 
   if (!objects.length) {
     throw new Error('No objects to work with');

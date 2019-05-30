@@ -23,6 +23,13 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 export type Format = 'json' | 'yaml' | 'properties';
 
+export function splitYamlIntoDocs(fileData: string): string[] {
+  return fileData
+    .split(/^(?:\s*\.\.\.\s*)?(?:---)?$(?:[^.])?/gm)
+    .filter(doc => {
+      return doc !== '' && doc != null;
+    });
+}
 
 export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
   if (typeof obj === 'object') {

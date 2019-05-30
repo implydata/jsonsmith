@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { replaceTokens, tryParse } from './parsing';
+import { replaceTokens, splitYamlIntoDocs, tryParse } from './parsing';
 
 describe('parsing', () => {
   describe('replaceTokens', () => {
@@ -56,6 +56,38 @@ describe('parsing', () => {
         }
       });
     });
+  });
 
+  describe('splitYamlIntoDocs', () => {
+    const yaml = `---
+addendum:
+    - title: Outro
+      details: |
+        '1996'
+        A major record deal 
+        and some international notoriety
+...
+---
+! some last minute edits
+tracks.1.title = Section(edited)
+blue = note will
+...
+---
+! final commit edits...
+tracks.1.title = Section(edited FINAL)
+blues = note will
+...
+---
+! ---final commit edits...
+tracks.1.title = Section(edited FINAL)
+blues = note will
+...
+`;
+    expect(splitYamlIntoDocs(yaml)).toEqual([
+      "addendum:\n    - title: Outro\n      details: |\n        '1996'\n        A major record deal \n        and some international notoriety\n",
+      "! some last minute edits\ntracks.1.title = Section(edited)\nblue = note will\n",
+      "! final commit edits...\ntracks.1.title = Section(edited FINAL)\nblues = note will\n",
+      "! ---final commit edits...\ntracks.1.title = Section(edited FINAL)\nblues = note will\n"
+    ]);
   });
 });
