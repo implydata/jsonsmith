@@ -40,20 +40,55 @@ describe('parsing', () => {
             "type": "mandarin",
             "brand": "%{brand3}%"
           }
-        }
+        },
+        "appleNames": ['mcintosh', '%{INSERT_YOUR_FAVORITE_APPLE_HERE}%'],
+        "appleRegistry": [
+          {
+            "owner": "Johnny",
+            "surname": "Appleseed",
+            "ownedApples": "mcintosh"
+          },
+          {
+            "owner": "%{INSERT_YOUR_NAME_HERE}%",
+            "surname": "%{INSERT_YOUR_LAST_NAME_HERE}%",
+            "ownedApples": "%{INSERT_YOUR_FAVORITE_APPLE_HERE}%"
+          }
+        ]
       };
 
-      expect(replaceTokens(obj, { 'orange1': 'navel', 'brand3': 'halo' })).toEqual({
-        "city": "Beijing",
-        "name": "Dealership1",
-        "oranges": {
-          "orange1": "navel",
-          "orange2": "blood",
-          "orange3": {
-            "brand": "halo",
-            "type": "mandarin"
-          }
-        }
+      expect(replaceTokens(
+        obj,
+        {
+          'orange1': 'navel',
+          'brand3': 'halo',
+          'INSERT_YOUR_FAVORITE_APPLE_HERE': 'jazz',
+          'INSERT_YOUR_NAME_HERE': 'Atalanta',
+          'INSERT_YOUR_LAST_NAME_HERE': 'Melanion'
+        }))
+        .toEqual({
+          "city": "Beijing",
+          "name": "Dealership1",
+          "oranges": {
+            "orange1": "navel",
+            "orange2": "blood",
+            "orange3": {
+              "brand": "halo",
+              "type": "mandarin"
+            }
+          },
+          "appleNames": ["mcintosh", "jazz"],
+          "appleRegistry": [
+            {
+              "ownedApples": "mcintosh",
+              "owner": "Johnny",
+              "surname": "Appleseed"
+            },
+            {
+              "ownedApples": "jazz",
+              "owner": "Atalanta",
+              "surname": "Melanion"
+            }
+          ]
       });
     });
   });
