@@ -85,7 +85,7 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
 export function replaceTokens(obj: any, vs: Record<string, string>): any {
   if (typeof obj === 'object') {
     for (const key in obj) {
-      if (Object.prototype.toString.call(obj[key]) === '[object Object]') {
+      if (Object.prototype.toString.call(obj[key]) === '[object Object]' || Array.isArray(obj[key])) {
         replaceTokens(obj[key], vs);
       } else {
         if (typeof obj[key] !== 'string') continue;

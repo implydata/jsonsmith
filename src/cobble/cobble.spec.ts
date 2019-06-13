@@ -82,7 +82,7 @@ describe('main', () => {
       length: '5:07'
     - title: Section
       length: '4:08'
-    - title: Panic!!!!!
+    - title: '%{TRACK_TITLE}%'
       length: '1:24'
     - title: It just don't stop
       length: '4:33'
@@ -180,7 +180,10 @@ blue = note will
         dotProperties,
         mixedFile
       ],
-      debug: console.log
+      debug: console.log,
+      varsObj: {
+        'TRACK_TITLE': 'Panic!!!!!'
+      }
     });
 
     expect(resp).toEqual({
