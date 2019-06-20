@@ -21,6 +21,8 @@ import * as properties from 'properties';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import { mapRecord } from '../object-utils/object-utils';
+
 export type Format = 'json' | 'yaml' | 'properties';
 
 export function splitYamlIntoDocs(fileData: string): string[] {
@@ -83,22 +85,17 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
 }
 
 export function replaceTokens(obj: any, vs: Record<string, string>): any {
-  if (typeof obj === 'object') {
-    for (const key in obj) {
-      if (Object.prototype.toString.call(obj[key]) === '[object Object]' || Array.isArray(obj[key])) {
-        replaceTokens(obj[key], vs);
-      } else {
-        if (typeof obj[key] !== 'string') continue;
-        const replaced = obj[key].replace(/%{[\w\-]+}%/g, (varName: string) => {
-          varName = varName.substr(2, varName.length - 4);
-          let v = vs[varName];
-          if (typeof v !== 'string') throw new Error(`could not find variable '${varName}'`);
-          return v;
-        });
-
-        obj[key] = replaced;
-      }
-    }
+  if (Object.prototype.toString.call(obj) === '[object Object]') {
+    return mapRecord(obj, v => replaceTokens(v, vs));
+  } else if (Array.isArray(obj)) {
+    return obj.map(element => replaceTokens(element, vs));
+  } else if (typeof obj === 'string') {
+    return obj.replace(/%{[\w\-]+}%/g, (varName: string) => {
+      varName = varName.substr(2, varName.length - 4);
+      let v = vs[varName];
+      if (typeof v !== 'string') throw new Error(`could not find variable '${varName}'`);
+      return v;
+    });
   }
 
   return obj;

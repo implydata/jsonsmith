@@ -57,6 +57,15 @@ export function isAppend(key: string): boolean {
   return key === '[append]' || key === '-1';
 }
 
+export function mapRecord<T, Q>(record: Record<string, T>, fn: (value: T, key: string) => Q): Record<string, Q> {
+  const newRecord: Record<string, Q> = {};
+  const keys = Object.keys(record);
+  for (const key of keys) {
+    newRecord[key] = fn(record[key], key);
+  }
+  return newRecord;
+}
+
 export function deepGet<T extends Record<string, any>>(value: T, path: string): any {
   const parts = parsePath(path);
   for (const part of parts) {

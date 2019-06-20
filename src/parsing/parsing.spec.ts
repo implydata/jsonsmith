@@ -33,6 +33,8 @@ describe('parsing', () => {
       const obj = {
         "name":"Dealership1",
         "city":"Beijing",
+        "fruitPatentRank": null,
+        "patentedFruits": [null],
         "oranges": {
           "orange1":"%{orange1}%",
           "orange2":"blood",
@@ -88,7 +90,9 @@ describe('parsing', () => {
               "owner": "Atalanta",
               "surname": "Melanion"
             }
-          ]
+          ],
+          "fruitPatentRank": null,
+          "patentedFruits": [null]
       });
     });
   });
