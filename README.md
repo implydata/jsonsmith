@@ -18,8 +18,8 @@ resolves a series of inputs to a single json value.
 
 ### Interpolation
   - a value with syntax `%{VARIABLE_NAME}%` will be evaluated in the context of `varsObj`
-  - `$read_json(path<string>, currentDir<string>)` will be interpreted as a file containing json
-  `$read_text(path<string>, currentDir<string>)` and `$read_yaml(path<string>, currentDir<string>)` are analogues for text and yaml files respectively.
+  - `$read_json(path<string>)` will be interpreted as a file containing json
+  `$read_text(path<string>)` and `$read_yaml(path<string>)` are analogues for text and yaml files respectively.
 
 ### Examples
 
@@ -70,7 +70,7 @@ import { cobble } from 'jsonsmith'
 cobble({
   inputs: [
     {
-     "raw": "template=$read_json('templates/template.json', '.')"
+     "raw": "template=$read_json('templates/template.json')"
     },
     {
      "raw": "version=%{APP_VERSION}%"
