@@ -5,7 +5,7 @@ resolves a series of inputs to a single json value.
 ## Usage:
 
 ### `cobble(options)`
-`options <Object>` has the following properties:
+`options` has the following properties:
   
 - `inputs (required)`: a list of inputs where each element can be one of the following:
   - a string representing a file path -- jsonsmith will try to figure out the format if not provided explicitly
@@ -14,7 +14,7 @@ resolves a series of inputs to a single json value.
 
 - `varsObj`: an optional object that will be used as the context for [interpolation](#interpolation) will be done and passed in as the last input
 
-- `debug <string>: void`: optional
+- `debug: (line: string) => void`: optional
 
 ### Interpolation
   - a value with syntax `%{VARIABLE_NAME}%` will be evaluated in the context of `varsObj`
