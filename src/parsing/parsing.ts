@@ -55,9 +55,9 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
 
           if (!fileName) continue;
 
-          let fileData: string | number | Buffer;
+          let fileData: string;
           try {
-            fileData = await fs.readFile(fileName, 'utf-8');
+            fileData = await fs.readFile(fileName, 'utf-8') as string;
           } catch (e) {
             throw new Error(`Could not read file: ${fileName}`);
           }
