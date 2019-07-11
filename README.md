@@ -18,8 +18,11 @@ resolves a series of inputs to a single json value.
 
 ### Interpolation
   - a value with syntax `%{VARIABLE_NAME}%` will be evaluated in the context of `varsObj`
-  - `$read_json(path<string>)` will be interpreted as a file containing json
-  `$read_text(path<string>)` and `$read_yaml(path<string>)` are analogues for text and yaml files respectively.
+  
+### File paths  
+  - `$read_text(path: string)` will be interpreted as a file containing text.
+  - `$read_json(path: string)` will be interpreted as a file containing json.
+  - `$read_yaml(path<string>)` will be interpreted as a file containing yaml.
 
 ### Examples
 
