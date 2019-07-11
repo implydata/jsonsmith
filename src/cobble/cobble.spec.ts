@@ -199,7 +199,7 @@ blue = note will
         "footnote3": [
           {
             "name": "ey",
-            "value": "\"\\n<!DOCTYPE html>\\n<html>\\n<body>\\n\\n<h1 style=\\\"color:blue;\\\">This is a heading</h1>\\n<p style=\\\"color:red;\\\">This is a paragraph.</p>\\n\\n</body>\\n</html>\\n    \""
+            "value": "\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1 style=\"color:blue;\">This is a heading</h1>\n<p style=\"color:red;\">This is a paragraph.</p>\n\n</body>\n</html>\n    "
           }
         ],
         "nest": {

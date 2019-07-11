@@ -64,7 +64,7 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
 
           switch (format) {
             case 'text':
-              obj[key] = JSON.stringify(fileData);
+              obj[key] = fileData;
               break;
             case 'yaml':
               const parsedYaml = await yaml.safeLoad(`${String(key)}: ${fileData}`);
