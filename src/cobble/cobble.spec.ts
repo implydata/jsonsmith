@@ -61,16 +61,12 @@ describe('main', () => {
   });
 
   it('throws with missing variables without ignoreMissingVariables', async () => {
-    const resp: any = await cobble({
+    expect(cobble({
       inputs: [
-        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': %{SOMETIMES_DEFINED}% }` }
+        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }` }
       ],
-      varsObj: {subdivision: 'pots and pans', SOMETIMES_DEFINED: "blah"}
-    });
-
-    expect(resp).toEqual({
-      "userNameLabel": "welcome to pots and pans"
-    });
+      varsObj: {subdivision: 'pots and pans'}
+    })).rejects.toEqual(new Error(`could not find variable '%{SOMETIMES_DEFINED}%'`));
   });
 
   it('works with dot properties', async () => {
