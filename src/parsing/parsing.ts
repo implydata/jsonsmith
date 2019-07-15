@@ -90,7 +90,7 @@ export function replaceTokens(obj: any, vs: Record<string, string>, ignoreMissin
   } else if (Array.isArray(obj)) {
     return obj.map(element => replaceTokens(element, vs, ignoreMissingVariables));
   } else if (typeof obj === 'string') {
-    const matches = obj.match(/%{([\w-]+)(?:\s?\|\|\s?)?([\w-]+)?}%/g);
+    const matches = obj.match(/%\{([\w-]+)(?:\s*\|\|\s*([\w-]+))?\}%/g);
     if (!matches) {
       if (obj.match(/%{.*}%/)) {
         throw new Error(`Tokens must only contain word characters and '-'`);
