@@ -30,7 +30,11 @@ describe('parsing', () => {
     });
 
     it('fails if it cannot find a variable if ignoreMissingVariables is not set', () => {
-      expect(() => replaceTokens({'type': '%{type}%'}, {})).toThrow();
+      expect(() => replaceTokens({'type': '%{type}%'}, {})).toThrow(`could not find variable '%{type}%'`);
+    });
+
+    it('throws a meaningful error if you probably meant to interpolate', () => {
+      expect(() => replaceTokens({'type': '%{type || some illegal stuff}%'}, {})).toThrow(`Tokens must only contain word characters and '-'`);
     });
 
     it('does not fail if it cannot find a variable if ignoreMissingVariables is set', () => {

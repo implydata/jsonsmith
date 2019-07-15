@@ -92,6 +92,10 @@ export function replaceTokens(obj: any, vs: Record<string, string>, ignoreMissin
   } else if (typeof obj === 'string') {
     const matches = obj.match(/%{([\w-]+)\s?(?:\|\|)?\s?([\w-]+)?}%/g);
     if (!matches) {
+      if (obj.match(/%{.*}%/)) {
+        throw new Error(`Tokens must only contain word characters and '-'`);
+      }
+
       return obj;
     }
 
@@ -101,7 +105,7 @@ export function replaceTokens(obj: any, vs: Record<string, string>, ignoreMissin
     const variables = unwrapped.split(/\s?\|\|\s?/);
     const variable = variables[0];
     if (!variable) {
-      throw new Error(`Unexpected variable: ${variable} in token: ${obj}`);
+      throw new Error(`Unexpected variable: ${variable} in token: ${token}`);
     }
 
     let v: string = vs[variable];

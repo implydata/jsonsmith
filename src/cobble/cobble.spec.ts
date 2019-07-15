@@ -113,6 +113,8 @@ describe('main', () => {
       length: '1:24'
     - title: It just don't stop
       length: '4:33'
+    - title: '%{TRACK_TITLE_TWO || unknown}%'
+      length: '5:16'
 `;
 
     await fs.writeFile(tracksYaml, tracksYamlContents);
@@ -248,6 +250,10 @@ blue = note will
           {
             "length": "4:33",
             "title": "It just don't stop"
+          },
+          {
+            "length": "5:16",
+            "title": "unknown"
           }
         ],
         "tracksAgain": [
@@ -266,6 +272,10 @@ blue = note will
           {
             "length": "4:33",
             "title": "It just don't stop"
+          },
+          {
+            "length": "5:16",
+            "title": "unknown"
           }
         ]
       }
