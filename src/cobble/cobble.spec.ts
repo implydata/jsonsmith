@@ -46,6 +46,33 @@ describe('main', () => {
     expect(resp.userNameLabel).toEqual('welcome to pots and pans');
   });
 
+  it('works with ignoreMissingVariables', async () => {
+    const resp: any = await cobble({
+      inputs: [
+        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }` }
+      ],
+      varsObj: {subdivision: 'pots and pans'},
+      ignoreMissingVariables: true,
+    });
+
+    expect(resp).toEqual({
+      "userNameLabel": "welcome to pots and pans"
+    });
+  });
+
+  it('throws with missing variables without ignoreMissingVariables', async () => {
+    const resp: any = await cobble({
+      inputs: [
+        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': %{SOMETIMES_DEFINED}% }` }
+      ],
+      varsObj: {subdivision: 'pots and pans', SOMETIMES_DEFINED: "blah"}
+    });
+
+    expect(resp).toEqual({
+      "userNameLabel": "welcome to pots and pans"
+    });
+  });
+
   it('works with dot properties', async () => {
     const dotProperties = 'test/configs/config.properties';
     const fileContents = 'userNameLabel=myDotPropertiesLabel';
