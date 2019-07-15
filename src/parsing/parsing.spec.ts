@@ -37,6 +37,10 @@ describe('parsing', () => {
       expect(() => replaceTokens({'type': '%{type || some illegal stuff}%'}, {})).toThrow(`Tokens must only contain word characters and '-'`);
     });
 
+    it('does not match spaces that are not a part of || null', () => {
+      expect(() => replaceTokens({'type': '%{lol moon}%'}, {})).toThrow(`Tokens must only contain word characters and '-'`);
+    });
+
     it('does not fail if it cannot find a variable if ignoreMissingVariables is set', () => {
       expect(replaceTokens({'type': '%{type}%'}, {}, true)).toEqual({});
     });
