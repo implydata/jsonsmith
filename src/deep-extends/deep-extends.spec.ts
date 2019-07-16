@@ -45,7 +45,6 @@ describe('deepExtends', () => {
       const one = { doe: ['a', 'deer'] };
       const two = { a: ['female', 'deer'] };
       const three = { ray: 'a drop of golden sun' };
-      const d = deepExtends({}, one, two, three);
 
       expect(one).toEqual({ doe: ['a', 'deer'] });
       expect(two).toEqual({ a: ['female', 'deer'] });

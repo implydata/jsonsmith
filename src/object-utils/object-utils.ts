@@ -128,8 +128,8 @@ export function whitelistKeys(obj: Record<string, any>, whitelist: string[]): Re
   return newObj;
 }
 
-export function getAllKeys(obj: any, prefix = ''): string[] {
-  return Object.keys(obj).reduce((res, key) => {
+export function getAllKeys(obj: Record<string, any>, prefix = ''): string[] {
+  return Object.keys(obj).reduce((res: string[], key: string) => {
     if (obj[key] !== null && Object.prototype.toString.call(obj[key]) === '[object Object]') {
       return [...res, ...getAllKeys(obj[key], prefix + key + '.')];
     } else {
