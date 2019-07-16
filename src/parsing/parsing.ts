@@ -84,18 +84,49 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
   return obj;
 }
 
-export function replaceTokens(obj: any, vs: Record<string, string>): any {
+export function replaceTokens(obj: any, vs: Record<string, string>, ignoreMissingVariables = false): any {
   if (Object.prototype.toString.call(obj) === '[object Object]') {
-    return mapRecord(obj, v => replaceTokens(v, vs));
+    return mapRecord(obj, v => replaceTokens(v, vs, ignoreMissingVariables));
   } else if (Array.isArray(obj)) {
-    return obj.map(element => replaceTokens(element, vs));
+    return obj.map(element => replaceTokens(element, vs, ignoreMissingVariables));
   } else if (typeof obj === 'string') {
-    return obj.replace(/%{[\w\-]+}%/g, (varName: string) => {
-      varName = varName.substr(2, varName.length - 4);
-      let v = vs[varName];
-      if (typeof v !== 'string') throw new Error(`could not find variable '${varName}'`);
-      return v;
-    });
+    const matches = obj.match(/%\{([\w-]+)(?:\s*\|\|\s*([\w-]+))?\}%/g);
+    if (!matches) {
+      if (obj.match(/%{.*}%/)) {
+        throw new Error(`Tokens must only contain word characters and '-'`);
+      }
+
+      return obj;
+    }
+
+    const token = matches[0];
+    const unwrapped = token.substr(2, token.length - 4);
+
+    const variables = unwrapped.split(/\s?\|\|\s?/);
+    const variable = variables[0];
+    if (!variable) {
+      throw new Error(`Unexpected variable: ${variable} in token: ${token}`);
+    }
+
+    let v: string = vs[variable];
+    if (v != undefined) {
+      return obj.replace(token, v);
+    }
+
+    if (variables[1] != undefined ) {
+      const fallbackValue = variables[1];
+      if (fallbackValue === 'null') { // replace string null with actual null
+        return null;
+      }
+
+      return fallbackValue;
+    }
+
+    if (ignoreMissingVariables) {
+      return undefined;
+    }
+
+    throw new Error(`could not find variable '${token}'`);
   }
 
   return obj;

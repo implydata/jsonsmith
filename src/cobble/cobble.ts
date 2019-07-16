@@ -38,6 +38,7 @@ export interface CobbleParams {
   varsObj?: Record<string, any>;
   debug?: (s: string) => void;
   disableReadFile?: boolean;
+  ignoreMissingVariables?: boolean;
 }
 
 const getPathAndFormat = (input: string | InputSpec | Raw) => {
@@ -68,7 +69,7 @@ const getFileData = (input: string | InputSpec | Raw, path: string | null) => {
 };
 
 export async function cobble<T>(params: CobbleParams): Promise<T> {
-  const { inputs, disableReadFile } = params;
+  const { inputs, disableReadFile, ignoreMissingVariables } = params;
   const debug = params.debug || ((v: string) => {});
   if (!Array.isArray(inputs)) {
     throw new Error(`Please provide a list of inputs either as strings or { path: string, format: 'json' | 'yaml' | 'properties' } objects`);
@@ -124,7 +125,7 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
   debug(`got objects: ${JSON.stringify(objects)}`);
 
   if (params.varsObj) {
-    objects = objects.map(object => replaceTokens(object, params.varsObj as Record<string, string>));
+    objects = objects.map(object => replaceTokens(object, params.varsObj as Record<string, string>, ignoreMissingVariables));
   }
 
   return deepExtends.apply(this, objects);

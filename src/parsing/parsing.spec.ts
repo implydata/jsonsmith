@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { replaceTokens, splitYamlIntoDocs, tryParse } from './parsing';
+import { replaceTokens, splitYamlIntoDocs } from './parsing';
 
 describe('parsing', () => {
   describe('replaceTokens', () => {
@@ -27,6 +27,22 @@ describe('parsing', () => {
 
     it('does not replace keys', () => {
       expect(replaceTokens({'%type%': '%{type}%'}, { type: 'malice' })).toEqual({"%type%": "malice"});
+    });
+
+    it('fails if it cannot find a variable if ignoreMissingVariables is not set', () => {
+      expect(() => replaceTokens({'type': '%{type}%'}, {})).toThrow(`could not find variable '%{type}%'`);
+    });
+
+    it('throws a meaningful error if you probably meant to interpolate', () => {
+      expect(() => replaceTokens({'type': '%{type || some illegal stuff}%'}, {})).toThrow(`Tokens must only contain word characters and '-'`);
+    });
+
+    it('does not match spaces that are not a part of || null', () => {
+      expect(() => replaceTokens({'type': '%{lol moon}%'}, {})).toThrow(`Tokens must only contain word characters and '-'`);
+    });
+
+    it('does not fail if it cannot find a variable if ignoreMissingVariables is set', () => {
+      expect(replaceTokens({'type': '%{type}%'}, {}, true)).toEqual({});
     });
 
     it('works with nested', () => {
@@ -55,7 +71,8 @@ describe('parsing', () => {
             "surname": "%{INSERT_YOUR_LAST_NAME_HERE}%",
             "ownedApples": "%{INSERT_YOUR_FAVORITE_APPLE_HERE}%"
           }
-        ]
+        ],
+        "deals": "%{DEALS || null}%"
       };
 
       expect(replaceTokens(
@@ -92,8 +109,21 @@ describe('parsing', () => {
             }
           ],
           "fruitPatentRank": null,
-          "patentedFruits": [null]
+          "patentedFruits": [null],
+          "deals": null
       });
+
+      expect(replaceTokens(
+        obj,
+        {
+          'orange1': 'navel',
+          'brand3': 'halo',
+          'INSERT_YOUR_FAVORITE_APPLE_HERE': 'jazz',
+          'INSERT_YOUR_NAME_HERE': 'Atalanta',
+          'INSERT_YOUR_LAST_NAME_HERE': 'Melanion',
+          'DEALS': 'apples'
+        }).deals)
+        .toEqual('apples')
     });
   });
 

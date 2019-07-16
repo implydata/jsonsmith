@@ -46,6 +46,29 @@ describe('main', () => {
     expect(resp.userNameLabel).toEqual('welcome to pots and pans');
   });
 
+  it('works with ignoreMissingVariables', async () => {
+    const resp: any = await cobble({
+      inputs: [
+        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }` }
+      ],
+      varsObj: {subdivision: 'pots and pans'},
+      ignoreMissingVariables: true,
+    });
+
+    expect(resp).toEqual({
+      "userNameLabel": "welcome to pots and pans"
+    });
+  });
+
+  it('throws with missing variables without ignoreMissingVariables', async () => {
+    expect(cobble({
+      inputs: [
+        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }` }
+      ],
+      varsObj: {subdivision: 'pots and pans'}
+    })).rejects.toEqual(new Error(`could not find variable '%{SOMETIMES_DEFINED}%'`));
+  });
+
   it('works with dot properties', async () => {
     const dotProperties = 'test/configs/config.properties';
     const fileContents = 'userNameLabel=myDotPropertiesLabel';
@@ -86,6 +109,8 @@ describe('main', () => {
       length: '1:24'
     - title: It just don't stop
       length: '4:33'
+    - title: '%{TRACK_TITLE_TWO || unknown}%'
+      length: '5:16'
 `;
 
     await fs.writeFile(tracksYaml, tracksYamlContents);
@@ -221,6 +246,10 @@ blue = note will
           {
             "length": "4:33",
             "title": "It just don't stop"
+          },
+          {
+            "length": "5:16",
+            "title": "unknown"
           }
         ],
         "tracksAgain": [
@@ -239,6 +268,10 @@ blue = note will
           {
             "length": "4:33",
             "title": "It just don't stop"
+          },
+          {
+            "length": "5:16",
+            "title": "unknown"
           }
         ]
       }
