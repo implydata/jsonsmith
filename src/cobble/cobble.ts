@@ -70,12 +70,12 @@ const getFileData = (input: string | InputSpec | Raw, path: string | null) => {
 
 export async function cobble<T>(params: CobbleParams): Promise<T> {
   const { inputs, disableReadFile, ignoreMissingVariables } = params;
-  const debug = params.debug || ((v: string) => {});
+  const debug = params.debug || (() => {});
   if (!Array.isArray(inputs)) {
     throw new Error(`Please provide a list of inputs either as strings or { path: string, format: 'json' | 'yaml' | 'properties' } objects`);
   }
 
-  let objects: any[] = [];
+  let objects: any[][] = [];
 
   for (let input of inputs) {
     const { path: filePath, format } = getPathAndFormat(input);
@@ -128,5 +128,5 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
     objects = objects.map(object => replaceTokens(object, params.varsObj as Record<string, string>, ignoreMissingVariables));
   }
 
-  return deepExtends.apply(this, objects);
+  return deepExtends(...objects);
 }

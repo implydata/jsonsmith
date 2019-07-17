@@ -43,12 +43,12 @@ function resolveNewValue(oldVal: any, newVal: any) {
   return deepExtends(oldVal, newVal);
 }
 
-export function deepExtends(target: any, ...sources: any[]) {
-  const args = Array.prototype.slice.call(arguments);
-
+export function deepExtends(...args: any[]) {
   if (args.length < 1 || typeof args[0] !== 'object') {
     throw new Error(`Invalid arguments: [${args.toString()}] must provide a list of json values.`);
   }
+
+  let target = args[0];
 
   if (args.length === 1) return target;
 
