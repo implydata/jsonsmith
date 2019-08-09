@@ -4,7 +4,7 @@
   "description": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.ccm/implydata/jsonsmith.git"
+    "url": "git+https://github.com/implydata/jsonsmith.git"
   },
   "main": "dist/index.js",
   "jest": {

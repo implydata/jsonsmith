@@ -39,10 +39,8 @@ describe('main', () => {
 
   it('works with two inline vars', async () => {
     const resp: any = await cobble({
-      inputs: [
-        { raw: `{'userNameLabel': 'welcome to %{subdivision}% %{moon}%'}` }
-      ],
-      varsObj: {subdivision: 'pots and pans', moon: 'lol'}
+      inputs: [{ raw: `{'userNameLabel': 'welcome to %{subdivision}% %{moon}%'}` }],
+      varsObj: { subdivision: 'pots and pans', moon: 'lol' },
     });
 
     expect(resp.userNameLabel).toEqual('welcome to pots and pans lol');
@@ -202,11 +200,7 @@ blue = note will
     await fs.writeFile(mixedFile, mixedContent);
 
     const resp: any = await cobble({
-      inputs: [
-        documentsYaml,
-        dotProperties,
-        mixedFile
-      ],
+      inputs: [documentsYaml, dotProperties, mixedFile],
       //debug: console.log,
       varsObj: {
         TRACK_TITLE: 'Panic!!!!!',
