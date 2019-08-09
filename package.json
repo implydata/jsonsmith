@@ -4,7 +4,7 @@
   "description": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/implydata/jsonsmith.git"
+    "url": "git+https://github.ccm/implydata/jsonsmith.git"
   },
   "main": "dist/index.js",
   "jest": {
@@ -31,6 +31,11 @@
     "tslint-changed-only": "git diff --diff-filter=ACMR --cached --name-only | grep -E \\.tsx\\?$ | xargs ./node_modules/.bin/tslint -c tslint.json --project tsconfig.json --formatters-dir ./node_modules/awesome-code-style/formatter",
     "tslint-fix-changed-only": "npm run tslint-changed-only -- --fix"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run tslint-changed-only"
+    }
+  },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
@@ -42,7 +47,7 @@
     "@types/fs-extra": "^8.0.0",
     "@types/jest": "^24.0.15",
     "@types/js-yaml": "^3.12.1",
-    "awesome-code-style": "^1.4.2",
+    "awesome-code-style": "^1.4.3",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",

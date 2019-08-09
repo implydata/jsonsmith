@@ -1,42 +1,39 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-import * as properties from 'properties';
+import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import * as fs from 'fs-extra';
+import * as properties from 'properties';
+
 import { mapRecord } from '../object-utils/object-utils';
 
 export type Format = 'json' | 'yaml' | 'properties';
 
 export function splitYamlIntoDocs(fileData: string): string[] {
-  return fileData
-    .split(/^(?:\s*\.\.\.\s*)?(?:---)?$(?:[^.])?/gm)
-    .filter(doc => {
-      return doc !== '' && doc != null;
-    });
+  return fileData.split(/^(?:\s*\.\.\.\s*)?(?:---)?$(?:[^.])?/gm).filter(doc => {
+    return doc !== '' && doc != null;
+  });
 }
 
 export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
   if (typeof obj === 'object') {
     for (const key in obj) {
-      if (Object.prototype.toString.call(obj[key]) === '[object Object]' || Array.isArray(obj[key])) {
+      if (
+        Object.prototype.toString.call(obj[key]) === '[object Object]' ||
+        Array.isArray(obj[key])
+      ) {
         await resolveFiles(obj[key], currentDir);
       } else {
         const value = obj[key];
@@ -47,7 +44,7 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
           if (args && typeof args[1] === 'string' && typeof args[2] === 'string') {
             format = args[1];
             if (!args[2] || typeof args[2] !== 'string') {
-              throw new Error("invalid arguments");
+              throw new Error('invalid arguments');
             }
 
             fileName = path.resolve(currentDir, args[2]);
@@ -57,7 +54,7 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
 
           let fileData: string;
           try {
-            fileData = await fs.readFile(fileName, 'utf-8') as string;
+            fileData = (await fs.readFile(fileName, 'utf-8')) as string;
           } catch (e) {
             throw new Error(`Could not read file: ${fileName}`);
           }
@@ -84,7 +81,11 @@ export async function resolveFiles(obj: any, currentDir: string): Promise<any> {
   return obj;
 }
 
-export function replaceTokens(obj: any, vs: Record<string, string>, ignoreMissingVariables = false): any {
+export function replaceTokens(
+  obj: any,
+  vs: Record<string, string>,
+  ignoreMissingVariables = false,
+): any {
   if (Object.prototype.toString.call(obj) === '[object Object]') {
     return mapRecord(obj, v => replaceTokens(v, vs, ignoreMissingVariables));
   } else if (Array.isArray(obj)) {
@@ -156,4 +157,3 @@ export async function tryParse(fileData: string, format?: Format | null) {
 
   throw new Error(`Could not parse: ${fileData}`);
 }
-

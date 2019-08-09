@@ -1,24 +1,20 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-import { cobble } from './cobble';
 import * as fs from 'fs-extra';
+
+import { cobble } from './cobble';
 
 describe('main', () => {
   it('works with two configs', async () => {
@@ -26,10 +22,7 @@ describe('main', () => {
     const fileContents = 'fixedConnections.0.name: override';
     await fs.writeFile(fixedConnectionYaml, fileContents);
     const resp: any = await cobble({
-      inputs: [
-        'test/configs/config-simple.yaml',
-        'test/configs/config-fixed-connection.yaml'
-      ]
+      inputs: ['test/configs/config-simple.yaml', 'test/configs/config-fixed-connection.yaml'],
     });
     expect(resp.fixedConnections[0].name).toEqual('override');
     await fs.remove(fixedConnectionYaml);
@@ -37,10 +30,8 @@ describe('main', () => {
 
   it('works with inline vars', async () => {
     const resp: any = await cobble({
-      inputs: [
-        { raw: `{'userNameLabel': 'welcome to %{subdivision}%'}` }
-      ],
-      varsObj: {subdivision: 'pots and pans'}
+      inputs: [{ raw: `{'userNameLabel': 'welcome to %{subdivision}%'}` }],
+      varsObj: { subdivision: 'pots and pans' },
     });
 
     expect(resp.userNameLabel).toEqual('welcome to pots and pans');
@@ -60,24 +51,30 @@ describe('main', () => {
   it('works with ignoreMissingVariables', async () => {
     const resp: any = await cobble({
       inputs: [
-        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }` }
+        {
+          raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }`,
+        },
       ],
-      varsObj: {subdivision: 'pots and pans'},
+      varsObj: { subdivision: 'pots and pans' },
       ignoreMissingVariables: true,
     });
 
     expect(resp).toEqual({
-      "userNameLabel": "welcome to pots and pans"
+      userNameLabel: 'welcome to pots and pans',
     });
   });
 
   it('throws with missing variables without ignoreMissingVariables', async () => {
-    expect(cobble({
-      inputs: [
-        { raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }` }
-      ],
-      varsObj: {subdivision: 'pots and pans'}
-    })).rejects.toEqual(new Error(`could not find variable '%{SOMETIMES_DEFINED}%'`));
+    expect(
+      cobble({
+        inputs: [
+          {
+            raw: `{'userNameLabel': 'welcome to %{subdivision}%', 'sometimesDefined': '%{SOMETIMES_DEFINED}%' }`,
+          },
+        ],
+        varsObj: { subdivision: 'pots and pans' },
+      }),
+    ).rejects.toEqual(new Error(`could not find variable '%{SOMETIMES_DEFINED}%'`));
   });
 
   it('works with dot properties', async () => {
@@ -86,10 +83,7 @@ describe('main', () => {
     await fs.writeFile(dotProperties, fileContents);
 
     const resp: any = await cobble({
-      inputs: [
-        'test/configs/config-simple.yaml',
-        'test/configs/config.properties'
-      ]
+      inputs: ['test/configs/config-simple.yaml', 'test/configs/config.properties'],
     });
     expect(resp.userNameLabel).toEqual('myDotPropertiesLabel');
     await fs.remove(dotProperties);
@@ -97,10 +91,7 @@ describe('main', () => {
 
   it('works with json overrides', async () => {
     const resp: any = await cobble({
-      inputs: [
-        'test/configs/config-simple.yaml',
-        { raw: `{'userMode': 'special-user'}` }
-      ]
+      inputs: ['test/configs/config-simple.yaml', { raw: `{'userMode': 'special-user'}` }],
     });
     expect(resp.userMode).toEqual('special-user');
   });
@@ -153,19 +144,19 @@ tracks.2.title: Panic!!!(edited)
 
     const footnoteJSON = 'test/configs/footnote.json';
     const footnoteJSONContents = {
-      "elements": [
+      elements: [
         {
-          "distance": {
-            "text": "94.6 mi",
-            "value": 152193
+          distance: {
+            text: '94.6 mi',
+            value: 152193,
           },
-          "duration": {
-            "text": "1 hour 44 mins",
-            "value": 6227
+          duration: {
+            text: '1 hour 44 mins',
+            value: 6227,
           },
-          "status": "OK"
-        }
-      ]
+          status: 'OK',
+        },
+      ],
     };
 
     await fs.writeJSON(footnoteJSON, footnoteJSONContents);
@@ -218,75 +209,76 @@ blue = note will
       ],
       //debug: console.log,
       varsObj: {
-        'TRACK_TITLE': 'Panic!!!!!'
-      }
+        TRACK_TITLE: 'Panic!!!!!',
+      },
     });
 
     expect(resp).toEqual({
-        "addendum": [
-          {
-            "details": "'1996'\nA major record deal \nand some international notoriety\n",
-            "title": "Outro"
-          }
-        ],
-        "blue": "note will",
-        "footnote": "-----BEGIN FOOTNOTE-----\nCharted only on the Bubbling Under Hot 100 Singles or \nBubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the \nBillboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.\n-----END FOOTNOTE-----\n",
-        "footnote2": footnoteJSONContents,
-        "footnote3": [
-          {
-            "name": "ey",
-            "value": "\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1 style=\"color:blue;\">This is a heading</h1>\n<p style=\"color:red;\">This is a paragraph.</p>\n\n</body>\n</html>\n    "
-          }
-        ],
-        "nest": {
-          "userNameLabel": "myDotPropertiesLabel"
+      addendum: [
+        {
+          details: "'1996'\nA major record deal \nand some international notoriety\n",
+          title: 'Outro',
         },
-        "tracks": [
-          {
-            "length": "5:07",
-            "title": "Respond/react"
-          },
-          {
-            "length": "4:08",
-            "title": "Section(edited)"
-          },
-          {
-            "length": "1:24",
-            "title": "Panic!!!(edited)"
-          },
-          {
-            "length": "4:33",
-            "title": "It just don't stop"
-          },
-          {
-            "length": "5:16",
-            "title": "unknown"
-          }
-        ],
-        "tracksAgain": [
-          {
-            "length": "5:07",
-            "title": "Respond/react"
-          },
-          {
-            "length": "4:08",
-            "title": "Section"
-          },
-          {
-            "length": "1:24",
-            "title": "Panic!!!!!"
-          },
-          {
-            "length": "4:33",
-            "title": "It just don't stop"
-          },
-          {
-            "length": "5:16",
-            "title": "unknown"
-          }
-        ]
-      }
-    );
+      ],
+      blue: 'note will',
+      footnote:
+        '-----BEGIN FOOTNOTE-----\nCharted only on the Bubbling Under Hot 100 Singles or \nBubbling Under R&B/Hip-Hop Singles charts, 25-song extensions to the \nBillboard Hot 100 and Hot R&B/Hip-Hop Songs charts respectively.\n-----END FOOTNOTE-----\n',
+      footnote2: footnoteJSONContents,
+      footnote3: [
+        {
+          name: 'ey',
+          value:
+            '\n<!DOCTYPE html>\n<html>\n<body>\n\n<h1 style="color:blue;">This is a heading</h1>\n<p style="color:red;">This is a paragraph.</p>\n\n</body>\n</html>\n    ',
+        },
+      ],
+      nest: {
+        userNameLabel: 'myDotPropertiesLabel',
+      },
+      tracks: [
+        {
+          length: '5:07',
+          title: 'Respond/react',
+        },
+        {
+          length: '4:08',
+          title: 'Section(edited)',
+        },
+        {
+          length: '1:24',
+          title: 'Panic!!!(edited)',
+        },
+        {
+          length: '4:33',
+          title: "It just don't stop",
+        },
+        {
+          length: '5:16',
+          title: 'unknown',
+        },
+      ],
+      tracksAgain: [
+        {
+          length: '5:07',
+          title: 'Respond/react',
+        },
+        {
+          length: '4:08',
+          title: 'Section',
+        },
+        {
+          length: '1:24',
+          title: 'Panic!!!!!',
+        },
+        {
+          length: '4:33',
+          title: "It just don't stop",
+        },
+        {
+          length: '5:16',
+          title: 'unknown',
+        },
+      ],
+    });
 
     await fs.remove(dotProperties);
     await fs.remove(documentsYaml);

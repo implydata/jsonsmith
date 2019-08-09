@@ -1,10 +1,28 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { deepExtends } from './deep-extends';
 
 describe('deepExtends', () => {
   describe('basic', () => {
     it('should throw with bad args', () => {
-      expect(() => (deepExtends as any)()).toThrowError('Invalid arguments: [] must provide a list of json values.');
-      expect(() => (deepExtends as any)('someString')).toThrowError('Invalid arguments: [someString] must provide a list of json values.');
+      expect(() => (deepExtends as any)()).toThrowError(
+        'Invalid arguments: [] must provide a list of json values.',
+      );
+      expect(() => (deepExtends as any)('someString')).toThrowError(
+        'Invalid arguments: [someString] must provide a list of json values.',
+      );
     });
 
     it('should work with just one', () => {
@@ -24,12 +42,12 @@ describe('deepExtends', () => {
       expect(deepExtends(one, two)).toEqual({ rising: 'down' });
     });
 
-    it('can deepExtends on 1 level', function () {
+    it('can deepExtends on 1 level', function() {
       const one = { home: 'grown!' };
       const two = { wake: 'up!' };
       expect(deepExtends(one, two)).toEqual({
         home: 'grown!',
-        wake: 'up!'
+        wake: 'up!',
       });
     });
 
@@ -37,7 +55,7 @@ describe('deepExtends', () => {
       const one = { member: { name: 'Captain Kirk Douglas' } };
       const two = { member: { role: 'guitar' } };
       expect(deepExtends(one, two)).toEqual({
-        member: { name: 'Captain Kirk Douglas', role: 'guitar' }
+        member: { name: 'Captain Kirk Douglas', role: 'guitar' },
       });
     });
 
@@ -50,81 +68,86 @@ describe('deepExtends', () => {
       expect(two).toEqual({ a: ['female', 'deer'] });
       expect(three).toEqual({ ray: 'a drop of golden sun' });
     });
-
   });
 
   describe('arrays', () => {
     it('works basic', () => {
-      expect(deepExtends({ numbers: [1, 2, 3] }, { numbers: [2, 3] })).toEqual({ numbers: [2, 3] });
+      expect(deepExtends({ numbers: [1, 2, 3] }, { numbers: [2, 3] })).toEqual({
+        numbers: [2, 3],
+      });
     });
 
     it('works for array notation', () => {
       const one = {
-        albums: [{
-          name: 'organix',
-          release: 1993,
-          tracks: [
-            {
-              name: 'the roots is comin',
-              track: 1,
-              length: '1:15'
-            },
-            {
-              name: 'pass the popcorn',
-              track: 2,
-              length: '1:15'
-            },
-            {
-              name: 'the anti circle',
-              track: 3,
-              length: '3:46'
-            },
-            {
-              name: 'writer\'s block',
-              track: 4,
-              length: '1:42'
-            }
-          ]
-        }],
-        singles: 8
+        albums: [
+          {
+            name: 'organix',
+            release: 1993,
+            tracks: [
+              {
+                name: 'the roots is comin',
+                track: 1,
+                length: '1:15',
+              },
+              {
+                name: 'pass the popcorn',
+                track: 2,
+                length: '1:15',
+              },
+              {
+                name: 'the anti circle',
+                track: 3,
+                length: '3:46',
+              },
+              {
+                name: "writer's block",
+                track: 4,
+                length: '1:42',
+              },
+            ],
+          },
+        ],
+        singles: 8,
       };
 
       const two = {
-        'albums.0.tracks.2.length': '1:20'
+        'albums.0.tracks.2.length': '1:20',
       };
 
       const three = {
-        'albums.0.tracks.3.length': '3:14'
+        'albums.0.tracks.3.length': '3:14',
       };
 
       expect(deepExtends(one, two, three)).toEqual({
-        albums: [{
-          name: 'organix',
-          release: 1993,
-          tracks: [
-            {
-              name: 'the roots is comin',
-              track: 1,
-              length: '1:15'
-            },
-            {
-              name: 'pass the popcorn',
-              track: 2,
-              length: '1:15'
-            },
-            {
-              name: 'the anti circle',
-              track: 3,
-              length: '1:20'
-            },
-            {
-              name: 'writer\'s block',
-              track: 4,
-              length: '3:14'
-            }
-          ]
-        }],
-        singles: 8
+        albums: [
+          {
+            name: 'organix',
+            release: 1993,
+            tracks: [
+              {
+                name: 'the roots is comin',
+                track: 1,
+                length: '1:15',
+              },
+              {
+                name: 'pass the popcorn',
+                track: 2,
+                length: '1:15',
+              },
+              {
+                name: 'the anti circle',
+                track: 3,
+                length: '1:20',
+              },
+              {
+                name: "writer's block",
+                track: 4,
+                length: '3:14',
+              },
+            ],
+          },
+        ],
+        singles: 8,
       });
     });
 
@@ -132,41 +155,41 @@ describe('deepExtends', () => {
       const one = {
         albums: [
           {
-            name: 'organix'
+            name: 'organix',
           },
           {
-            name: 'the tipping point'
-          }
-        ]
+            name: 'the tipping point',
+          },
+        ],
       };
 
       const two = { 'albums.[append]': { name: 'game theory' } };
       expect(deepExtends(one, two)).toEqual({
         albums: [
           {
-            name: 'organix'
+            name: 'organix',
           },
           {
-            name: 'the tipping point'
+            name: 'the tipping point',
           },
           {
-            name: 'game theory'
-          }
-        ]
+            name: 'game theory',
+          },
+        ],
       });
 
       expect(deepExtends(one, two, { 'albums.0.name': 'rising down' })).toEqual({
         albums: [
           {
-            name: 'rising down'
+            name: 'rising down',
           },
           {
-            name: 'the tipping point'
+            name: 'the tipping point',
           },
           {
-            name: 'game theory'
-          }
-        ]
+            name: 'game theory',
+          },
+        ],
       });
     });
   });
@@ -179,13 +202,13 @@ describe('deepExtends', () => {
         nice: {
           a: 1,
           b: [],
-          c: { an: 123, ice: 321, bag: 1 }
+          c: { an: 123, ice: 321, bag: 1 },
         },
         swag: {
           diamond: ['collar'],
         },
         pockets: { ice: 3 },
-        f: ['bag']
+        f: ['bag'],
       };
 
       const obj2 = {
@@ -193,7 +216,7 @@ describe('deepExtends', () => {
         nice: null,
         'swag.diamond.0': 'collar',
         'swag.diamond.1': 'teeth',
-        pockets: { need: 1, an: 2 }
+        pockets: { need: 1, an: 2 },
       };
 
       expect(deepExtends(obj1, obj2)).toEqual({
@@ -201,16 +224,17 @@ describe('deepExtends', () => {
         bag: 3,
         nice: null,
         swag: {
-          diamond: ['collar', 'teeth']
+          diamond: ['collar', 'teeth'],
         },
         pockets: { need: 1, an: 2, ice: 3 },
-        f: ['bag']
+        f: ['bag'],
       });
 
       const obj3 = {
         pockets: {
-          have: 'an', bag: { contents: 'ice' }
-        }
+          have: 'an',
+          bag: { contents: 'ice' },
+        },
       };
 
       expect(deepExtends(obj1, obj2, obj3)).toEqual({
@@ -218,14 +242,20 @@ describe('deepExtends', () => {
         bag: 3,
         nice: null,
         swag: {
-          diamond: ['collar', 'teeth']
+          diamond: ['collar', 'teeth'],
         },
-        pockets: { need: 1, an: 2, ice: 3, have: 'an', bag: { contents: 'ice' } },
-        f: ['bag']
+        pockets: {
+          need: 1,
+          an: 2,
+          ice: 3,
+          have: 'an',
+          bag: { contents: 'ice' },
+        },
+        f: ['bag'],
       });
 
       const obj4 = {
-        'pockets.bag.contents' : 'ice-cream'
+        'pockets.bag.contents': 'ice-cream',
       };
 
       expect(deepExtends(obj1, obj2, obj3, obj4)).toEqual({
@@ -233,10 +263,16 @@ describe('deepExtends', () => {
         bag: 3,
         nice: null,
         swag: {
-          diamond: ['collar', 'teeth']
+          diamond: ['collar', 'teeth'],
         },
-        pockets: { need: 1, an: 2, ice: 3, have: 'an', bag: { contents: 'ice-cream' } },
-        f: ['bag']
+        pockets: {
+          need: 1,
+          an: 2,
+          ice: 3,
+          have: 'an',
+          bag: { contents: 'ice-cream' },
+        },
+        f: ['bag'],
       });
     });
 
@@ -247,19 +283,19 @@ describe('deepExtends', () => {
         nice: {
           a: 1,
           b: [],
-          c: { an: 123, ice: 321, bag: 1 }
+          c: { an: 123, ice: 321, bag: 1 },
         },
         swag: {
           diamond: ['collar'],
         },
         pockets: { ice: 3 },
-        f: ['bag']
+        f: ['bag'],
       };
 
       const obj2 = {
         bag: 3,
         nice: null,
-        pockets: { need: 1, an: 2 }
+        pockets: { need: 1, an: 2 },
       };
 
       expect(deepExtends(obj1, obj2)).toEqual({
@@ -267,10 +303,10 @@ describe('deepExtends', () => {
         bag: 3,
         nice: null,
         swag: {
-          'diamond': ['collar']
+          diamond: ['collar'],
         },
         pockets: { need: 1, an: 2, ice: 3 },
-        f: ['bag']
+        f: ['bag'],
       });
     });
   });

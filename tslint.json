@@ -1,5 +1,5 @@
 {
-  "extends": "awesome-code-style/tslint.json",
+  "extends": "awesome-code-style",
   "rules": {
     "no-shadowed-variable": false,
     "variable-name": true,
@@ -8,8 +8,7 @@
     "object-literal-shorthand": false,
     "no-require-imports": false,
     "arrow-return-shorthand": false,
-    "no-var-requires": true,
-    "no-unused-variable": true
+    "no-var-requires": true
   },
   "linterOptions": {
     "format": "useful"

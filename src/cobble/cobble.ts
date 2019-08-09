@@ -1,26 +1,28 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-import { Format, replaceTokens, resolveFiles, splitYamlIntoDocs, tryParse } from '../parsing/parsing';
-import { deepExtends } from '../deep-extends/deep-extends';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+
+import { deepExtends } from '../deep-extends/deep-extends';
+import {
+  Format,
+  replaceTokens,
+  resolveFiles,
+  splitYamlIntoDocs,
+  tryParse,
+} from '../parsing/parsing';
 
 interface InputSpec {
   path: string;
@@ -45,7 +47,10 @@ const getPathAndFormat = (input: string | InputSpec | Raw) => {
   if (typeof input === 'string') {
     return { path: input };
   } else if (!(input as Raw).raw) {
-    return { path: (input as InputSpec).path, format: (input as InputSpec).format };
+    return {
+      path: (input as InputSpec).path,
+      format: (input as InputSpec).format,
+    };
   } else {
     return { path: null, format: null };
   }
@@ -72,12 +77,14 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
   const { inputs, disableReadFile, ignoreMissingVariables } = params;
   const debug = params.debug || (() => {});
   if (!Array.isArray(inputs)) {
-    throw new Error(`Please provide a list of inputs either as strings or { path: string, format: 'json' | 'yaml' | 'properties' } objects`);
+    throw new Error(
+      `Please provide a list of inputs either as strings or { path: string, format: 'json' | 'yaml' | 'properties' } objects`,
+    );
   }
 
   let objects: any[][] = [];
 
-  for (let input of inputs) {
+  for (const input of inputs) {
     const { path: filePath, format } = getPathAndFormat(input);
     const fileData = await getFileData(input, filePath);
 
@@ -115,7 +122,6 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
     }
   }
 
-
   if (!objects.length) {
     throw new Error('No objects to work with');
   }
@@ -125,7 +131,9 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
   debug(`got objects: ${JSON.stringify(objects)}`);
 
   if (params.varsObj) {
-    objects = objects.map(object => replaceTokens(object, params.varsObj as Record<string, string>, ignoreMissingVariables));
+    objects = objects.map(object =>
+      replaceTokens(object, params.varsObj as Record<string, string>, ignoreMissingVariables),
+    );
   }
 
   return deepExtends(...objects);

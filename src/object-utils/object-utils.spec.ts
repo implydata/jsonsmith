@@ -1,20 +1,15 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { deepDelete, deepGet, deepSet, getAllKeys, makePath, parsePath } from './object-utils';
@@ -26,7 +21,6 @@ describe('object-change', () => {
       expect(parsePath('hello.{wow.moon}.0')).toEqual(['hello', 'wow.moon', '0']);
       expect(parsePath('hello.#.0.[append]')).toEqual(['hello', '#', '0', '[append]']);
     });
-
   });
 
   describe('makePath', () => {
@@ -34,19 +28,15 @@ describe('object-change', () => {
       expect(makePath(['hello', 'wow', '0'])).toEqual('hello.wow.0');
       expect(makePath(['hello', 'wow.moon', '0'])).toEqual('hello.{wow.moon}.0');
     });
-
   });
 
   describe('deepGet', () => {
     const thing = {
       hello: {
         'consumer.props': 'lol',
-        wow: [
-          'a',
-          { test: 'moon' }
-        ]
+        wow: ['a', { test: 'moon' }],
       },
-      zetrix: null as any
+      zetrix: null as any,
     };
 
     it('works', () => {
@@ -58,18 +48,14 @@ describe('object-change', () => {
     it('works with arrays', () => {
       expect(deepGet({ key: ['one'] }, 'key.0')).toEqual('one');
     });
-
   });
 
   describe('deepSet', () => {
     const thing = {
       hello: {
-        wow: [
-          'a',
-          { test: 'moon' }
-        ]
+        wow: ['a', { test: 'moon' }],
       },
-      zetrix: null as any
+      zetrix: null as any,
     };
 
     it('works to set an existing thing', () => {
@@ -78,11 +64,11 @@ describe('object-change', () => {
           wow: [
             5,
             {
-              test: 'moon'
-            }
-          ]
+              test: 'moon',
+            },
+          ],
         },
-        zetrix: null as any
+        zetrix: null as any,
       });
     });
 
@@ -92,18 +78,18 @@ describe('object-change', () => {
           wow: [
             'a',
             {
-              test: 'moon'
-            }
-          ]
+              test: 'moon',
+            },
+          ],
         },
         lets: {
           do: {
             this: {
-              now: 5
-            }
-          }
+              now: 5,
+            },
+          },
         },
-        zetrix: null as any
+        zetrix: null as any,
       });
     });
 
@@ -113,33 +99,29 @@ describe('object-change', () => {
           wow: [
             'a',
             {
-              test: 'moon'
+              test: 'moon',
             },
-            5
-          ]
+            5,
+          ],
         },
-        zetrix: null as any
+        zetrix: null as any,
       });
     });
-
   });
 
   describe('deepDelete', () => {
     const thing = {
       hello: {
         moon: 1,
-        wow: [
-          'a',
-          { test: 'moon' }
-        ]
+        wow: ['a', { test: 'moon' }],
       },
-      zetrix: null as any
+      zetrix: null as any,
     };
 
     it('works to delete an existing thing', () => {
       expect(deepDelete(thing, 'hello.wow')).toEqual({
         hello: { moon: 1 },
-        zetrix: null
+        zetrix: null,
       });
     });
 
@@ -149,7 +131,7 @@ describe('object-change', () => {
 
     it('removes things completely', () => {
       expect(deepDelete(deepDelete(thing, 'hello.wow'), 'hello.moon')).toEqual({
-        zetrix: null
+        zetrix: null,
       });
     });
 
@@ -159,58 +141,52 @@ describe('object-change', () => {
           moon: 1,
           wow: [
             {
-              test: 'moon'
-            }
-          ]
+              test: 'moon',
+            },
+          ],
         },
-        zetrix: null
+        zetrix: null,
       });
     });
-
   });
 
   describe('getAllKeys', () => {
     it('works with nested', () => {
-      expect(getAllKeys({
-        "key1": {
-          "subkey1": 2,
-          "subkey2": {
-            "three": 3
-          }
-        },
-        "key2": "things",
-        "key3": null
-      })).toEqual([
-        "key1.subkey1",
-        "key1.subkey2.three",
-        "key2",
-        "key3"
-      ]);
+      expect(
+        getAllKeys({
+          key1: {
+            subkey1: 2,
+            subkey2: {
+              three: 3,
+            },
+          },
+          key2: 'things',
+          key3: null,
+        }),
+      ).toEqual(['key1.subkey1', 'key1.subkey2.three', 'key2', 'key3']);
     });
 
     it('works with nested array', () => {
-      expect(getAllKeys({
-        "someProperties": {
-          "common": [
-            "a=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer",
-            ""
-          ]
-        }
-      })).toEqual([
-        'someProperties.common'
-      ]);
+      expect(
+        getAllKeys({
+          someProperties: {
+            common: [
+              'a=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer\na=aer',
+              '',
+            ],
+          },
+        }),
+      ).toEqual(['someProperties.common']);
     });
 
     it('works with not nested', () => {
-      expect(getAllKeys({
-        "key1": "value1",
-        "key2": "value2",
-        "key3": null
-      })).toEqual([
-        "key1",
-        "key2",
-        "key3"
-      ]);
+      expect(
+        getAllKeys({
+          key1: 'value1',
+          key2: 'value2',
+          key3: null,
+        }),
+      ).toEqual(['key1', 'key2', 'key3']);
     });
   });
 });
