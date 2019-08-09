@@ -90,7 +90,7 @@ export function replaceTokens(obj: any, vs: Record<string, string>, ignoreMissin
   } else if (Array.isArray(obj)) {
     return obj.map(element => replaceTokens(element, vs, ignoreMissingVariables));
   } else if (typeof obj === 'string') {
-    const matches = obj.match(/%\{([\w-]+)(?:\s*\|\|\s*([\w-]+))?\}%/g);
+    const matches = obj.match(/%\{[\w-]+(?:\s*\|\|\s*[\w-]+)?\}%/g);
     if (!matches) {
       if (obj.match(/%{.*}%/)) {
         throw new Error(`Tokens must only contain word characters and '-'`);
@@ -99,34 +99,34 @@ export function replaceTokens(obj: any, vs: Record<string, string>, ignoreMissin
       return obj;
     }
 
-    const token = matches[0];
-    const unwrapped = token.substr(2, token.length - 4);
+    for (let token of matches) {
+      const unwrapped = token.substr(2, token.length - 4);
 
-    const variables = unwrapped.split(/\s?\|\|\s?/);
-    const variable = variables[0];
-    if (!variable) {
-      throw new Error(`Unexpected variable: ${variable} in token: ${token}`);
-    }
-
-    let v: string = vs[variable];
-    if (v != undefined) {
-      return obj.replace(token, v);
-    }
-
-    if (variables[1] != undefined ) {
-      const fallbackValue = variables[1];
-      if (fallbackValue === 'null') { // replace string null with actual null
-        return null;
+      const variables = unwrapped.split(/\s?\|\|\s?/);
+      const variable = variables[0];
+      if (!variable) {
+        throw new Error(`Unexpected variable: ${variable} in token: ${token}`);
       }
 
-      return fallbackValue;
-    }
+      let v: string = vs[variable];
+      if (v === undefined) {
+        if (variables[1] != undefined) {
+          const fallbackValue = variables[1];
+          if (fallbackValue === 'null') return null;
+          v = fallbackValue;
+        }
+      }
 
-    if (ignoreMissingVariables) {
-      return undefined;
-    }
+      if (v != undefined) {
+        obj = obj.replace(token, v);
+      } else {
+        if (ignoreMissingVariables) {
+          return undefined;
+        }
 
-    throw new Error(`could not find variable '${token}'`);
+        throw new Error(`could not find variable '${token}'`);
+      }
+    }
   }
 
   return obj;

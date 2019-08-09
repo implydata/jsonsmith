@@ -46,6 +46,17 @@ describe('main', () => {
     expect(resp.userNameLabel).toEqual('welcome to pots and pans');
   });
 
+  it('works with two inline vars', async () => {
+    const resp: any = await cobble({
+      inputs: [
+        { raw: `{'userNameLabel': 'welcome to %{subdivision}% %{moon}%'}` }
+      ],
+      varsObj: {subdivision: 'pots and pans', moon: 'lol'}
+    });
+
+    expect(resp.userNameLabel).toEqual('welcome to pots and pans lol');
+  });
+
   it('works with ignoreMissingVariables', async () => {
     const resp: any = await cobble({
       inputs: [
@@ -205,7 +216,7 @@ blue = note will
         dotProperties,
         mixedFile
       ],
-      debug: console.log,
+      //debug: console.log,
       varsObj: {
         'TRACK_TITLE': 'Panic!!!!!'
       }
