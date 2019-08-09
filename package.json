@@ -22,7 +22,7 @@
     "endOfLine": "lf"
   },
   "scripts": {
-    "test": "jest --config jestconfig.json",
+    "test": "./script/travis-test",
     "watch": "tsc --watch",
     "build": "tsc",
     "compile": "tsc",

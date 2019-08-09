@@ -100,7 +100,7 @@ export function replaceTokens(
       return obj;
     }
 
-    for (let token of matches) {
+    for (const token of matches) {
       const unwrapped = token.substr(2, token.length - 4);
 
       const variables = unwrapped.split(/\s?\|\|\s?/);
@@ -111,14 +111,14 @@ export function replaceTokens(
 
       let v: string = vs[variable];
       if (v === undefined) {
-        if (variables[1] != undefined) {
+        if (variables[1] !== undefined) {
           const fallbackValue = variables[1];
           if (fallbackValue === 'null') return null;
           v = fallbackValue;
         }
       }
 
-      if (v != undefined) {
+      if (v !== undefined) {
         obj = obj.replace(token, v);
       } else {
         if (ignoreMissingVariables) {

@@ -201,7 +201,7 @@ blue = note will
 
     const resp: any = await cobble({
       inputs: [documentsYaml, dotProperties, mixedFile],
-      //debug: console.log,
+      // debug: console.log,
       varsObj: {
         TRACK_TITLE: 'Panic!!!!!',
       },
