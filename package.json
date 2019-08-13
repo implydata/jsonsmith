@@ -22,10 +22,11 @@
     "endOfLine": "lf"
   },
   "scripts": {
-    "test": "./script/travis-test",
+    "test": "npm run tslint && ./script/travis-test",
     "watch": "tsc --watch",
     "build": "tsc",
-    "compile": "tsc",
+    "compile": "rm -rf build/* && tsc",
+    "pretest": "npm run compile",
     "tslint": "./node_modules/.bin/tslint -c tslint.json --project tsconfig.json --formatters-dir ./node_modules/awesome-code-style/formatter 'src/**/*.ts?(x)'",
     "tslint-fix": "npm run tslint -- --fix",
     "tslint-changed-only": "git diff --diff-filter=ACMR --cached --name-only | grep -E \\.tsx\\?$ | xargs ./node_modules/.bin/tslint -c tslint.json --project tsconfig.json --formatters-dir ./node_modules/awesome-code-style/formatter",
