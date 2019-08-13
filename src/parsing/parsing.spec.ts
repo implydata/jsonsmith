@@ -131,7 +131,8 @@ describe('parsing', () => {
   });
 
   describe('splitYamlIntoDocs', () => {
-    const yaml = `---
+    it('works', () => {
+      const yaml = `---
 addendum:
     - title: Outro
       details: |
@@ -155,11 +156,32 @@ tracks.1.title = Section(edited FINAL)
 blues = note will
 ...
 `;
-    expect(splitYamlIntoDocs(yaml)).toEqual([
-      "addendum:\n    - title: Outro\n      details: |\n        '1996'\n        A major record deal \n        and some international notoriety\n",
-      '! some last minute edits\ntracks.1.title = Section(edited)\nblue = note will\n',
-      '! final commit edits...\ntracks.1.title = Section(edited FINAL)\nblues = note will\n',
-      '! ---final commit edits...\ntracks.1.title = Section(edited FINAL)\nblues = note will\n',
-    ]);
+      expect(splitYamlIntoDocs(yaml)).toEqual([
+        "addendum:\n    - title: Outro\n      details: |\n        '1996'\n        A major record deal \n        and some international notoriety\n",
+        '! some last minute edits\ntracks.1.title = Section(edited)\nblue = note will\n',
+        '! final commit edits...\ntracks.1.title = Section(edited FINAL)\nblues = note will\n',
+        '! ---final commit edits...\ntracks.1.title = Section(edited FINAL)\nblues = note will\n',
+      ]);
+    });
+
+    it('works with inline html', async () => {
+      const yamlContents = `
+footnoteInlineHTML: |
+  <!DOCTYPE html>
+
+  <html>
+
+  <body>
+  
+  <h1 style="color:blue;">This is a heading</h1>
+  <p style="color:red;">This is a paragraph.</p>
+  
+  </body>
+  </html>      
+`;
+      expect(splitYamlIntoDocs(yamlContents)).toEqual([
+        '\nfootnoteInlineHTML: |\n  <!DOCTYPE html>\n\n  <html>\n\n  <body>\n  \n  <h1 style="color:blue;">This is a heading</h1>\n  <p style="color:red;">This is a paragraph.</p>\n  \n  </body>\n  </html>      \n',
+      ]);
+    });
   });
 });
