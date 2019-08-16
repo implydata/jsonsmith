@@ -22,7 +22,7 @@ import { mapRecord } from '../object-utils/object-utils';
 export type Format = 'json' | 'yaml' | 'properties';
 
 export function splitYamlIntoDocs(fileData: string): string[] {
-  return fileData.split(/^(?:\s*\.\.\.\s*)|(?:---)$(?:[^.])?/gm).filter(doc => {
+  return fileData.split(/^(?:\s*\.\.\.\s*$)|(?:^---)$(?:[^.])?/gm).filter(doc => {
     return doc !== '' && doc != null;
   });
 }

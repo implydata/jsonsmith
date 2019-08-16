@@ -164,7 +164,7 @@ blues = note will
       ]);
     });
 
-    it('works with inline html', async () => {
+    it('works with inline html and certs', async () => {
       const yamlContents = `
 footnoteInlineHTML: |
   <!DOCTYPE html>
@@ -178,9 +178,25 @@ footnoteInlineHTML: |
   
   </body>
   </html>      
+
+someCertOptions:
+  someOption: |
+    -----BEGIN BLOCK-----
+contents      
+    -----END BLOCK-----
+  someSecondOption: |
+    -----BEGIN SECOND BLOCK-----
+
+contents
+    -----END SECOND BLOCK-----
+
+    ...BEGIN THIRD BLOCK...
+
+contents
+    ...END THIRD BLOCK...
 `;
       expect(splitYamlIntoDocs(yamlContents)).toEqual([
-        '\nfootnoteInlineHTML: |\n  <!DOCTYPE html>\n\n  <html>\n\n  <body>\n  \n  <h1 style="color:blue;">This is a heading</h1>\n  <p style="color:red;">This is a paragraph.</p>\n  \n  </body>\n  </html>      \n',
+        '\nfootnoteInlineHTML: |\n  <!DOCTYPE html>\n\n  <html>\n\n  <body>\n  \n  <h1 style="color:blue;">This is a heading</h1>\n  <p style="color:red;">This is a paragraph.</p>\n  \n  </body>\n  </html>      \n\nsomeCertOptions:\n  someOption: |\n    -----BEGIN BLOCK-----\ncontents      \n    -----END BLOCK-----\n  someSecondOption: |\n    -----BEGIN SECOND BLOCK-----\n\ncontents\n    -----END SECOND BLOCK-----\n\n    ...BEGIN THIRD BLOCK...\n\ncontents\n    ...END THIRD BLOCK...\n',
       ]);
     });
   });
