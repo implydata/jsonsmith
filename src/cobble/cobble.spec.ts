@@ -94,6 +94,20 @@ describe('main', () => {
     expect(resp.userMode).toEqual('special-user');
   });
 
+  it('errors with no existing files', async () => {
+    expect.assertions(1);
+    try {
+      await cobble({
+        inputs: [
+          'test/configs/config-simple.yaml',
+          { raw: `{'userMode': '$read_text(blah.txt)'}` },
+        ],
+      });
+    } catch (e) {
+      expect(e.message).toMatch(/Could not resolve files: Could not read file:.+blah.txt/);
+    }
+  });
+
   it('works with yaml documents', async () => {
     const dotProperties = 'test/configs/config.properties';
     const dotPropertiesContents = 'nest.userNameLabel=myDotPropertiesLabel';

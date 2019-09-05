@@ -58,12 +58,7 @@ const getPathAndFormat = (input: string | InputSpec | Raw) => {
 
 const getFileData = (input: string | InputSpec | Raw, path: string | null) => {
   if (path) {
-    try {
-      return fs.readFile(path, 'utf-8');
-    } catch (e) {
-      console.log(`error in read: for ${path}: ${e.message}`);
-      return null;
-    }
+    return fs.readFile(path, 'utf-8');
   }
 
   if ((input as Raw).raw) {
@@ -86,7 +81,17 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
 
   for (const input of inputs) {
     const { path: filePath, format } = getPathAndFormat(input);
-    const fileData = await getFileData(input, filePath);
+
+    let fileData: string | undefined;
+    try {
+      fileData = await getFileData(input, filePath);
+    } catch (e) {
+      const message = `Could not read config file: ${e.message}`;
+      if (!ignoreMissingVariables) {
+        throw new Error(message);
+      }
+      debug(`${message}, continuing`);
+    }
 
     if (!fileData) {
       continue;
@@ -101,7 +106,19 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
         parsed = await tryParse(doc, format);
         debug(`parsed: ${JSON.stringify(parsed)}`);
       } catch (e) {
-        debug(`Could not parse: ${filePath} for doc ${i}: ${e.message}, continuing`);
+        let messageArr = [`Could not parse`];
+        if (docs.length > 1) {
+          messageArr = messageArr.concat(`for doc ${i}`);
+        }
+
+        messageArr = messageArr.concat(e.message);
+
+        const message = messageArr.join(' ');
+        if (!ignoreMissingVariables) {
+          throw new Error(message);
+        }
+
+        debug(`${message}, continuing`);
       }
 
       if (disableReadFile) {
@@ -117,7 +134,20 @@ export async function cobble<T>(params: CobbleParams): Promise<T> {
         debug(`resolved files: ${JSON.stringify(resolved)}`);
         objects = objects.concat(resolved);
       } catch (e) {
-        debug(`Could not resolve: ${filePath} for doc ${i}: ${e.message}, continuing`);
+        let messageArr = [`Could not resolve files:`];
+        if (docs.length > 1) {
+          messageArr = messageArr.concat(`for doc ${i}`);
+        }
+
+        messageArr = messageArr.concat(e.message);
+
+        const message = messageArr.join(' ');
+
+        if (!ignoreMissingVariables) {
+          throw new Error(message);
+        }
+
+        debug(`${message}, continuing`);
       }
     }
   }
